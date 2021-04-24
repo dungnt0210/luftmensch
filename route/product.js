@@ -56,7 +56,7 @@ router.post("/create", (req, res) => {
       newProduct
          .save()
          .then(doc => {
-            let productDir = 'client/public/product/' + doc._id;
+            let productDir = 'client/public/product-img/' + doc._id;
             if (!fs.existsSync(productDir)){
                fs.mkdirSync(productDir, err => res.status(400));
            }
@@ -81,8 +81,9 @@ router.get("/category/:cateId", (req, res) => {
 }
 );
 
-router.get("/:id", (req, res) => {
-   Product.findOne({ _id: req.params.id })
+router.get("/:id", async (req, res) => {
+   console.log(req.params.id);
+   await Product.find({ _id: req.params.id })
       .then(doc => res.status(200).json(doc))
       .catch(err => res.status(400).json(err));
 });

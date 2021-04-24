@@ -4,8 +4,7 @@ const { ObjectId } = Schema.Types;
 
 const Customer = {
    name: {
-      type: String,
-      required: true
+      type: String
    },
    email: {
       type: String,
@@ -16,16 +15,13 @@ const Customer = {
       required: true
    },
    gender: {
-      type: String,
-      required: true
+      type: String
    },
    postCode: {
-    type: String,
-    required: true
+    type: String
   },
    address: {
-      type: String,
-      required: true
+      type: String
    },
    birthday: {
       type: Date

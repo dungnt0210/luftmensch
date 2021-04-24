@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
-const passport = require("passport");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -17,12 +16,11 @@ mongoose
 mongoose.set("useFindAndModify", false);
 mongoose.Promise = global.Promise;
 
-app.use(passport.initialize());
-require("./middleware/passport")(passport);
 app.use("/blog/", require("./route/blog"));
 app.use("/product/", require("./route/product"));
 app.use("/category/", require("./route/category"));
 app.use("/order/", require("./route/order"));
+app.use("/customer/", require("./route/customer"));
 
 app.use("/review/", require("./route/review"));
 app.use("/user/", require("./route/user"));
