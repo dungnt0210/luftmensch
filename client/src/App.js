@@ -3,9 +3,12 @@ import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./store";
 import jwt_decode from "jwt-decode";
+import "antd/dist/antd.css";
 import customerToken from "./utils/customerToken";
 
 import LoginPage from "./containers/LoginPage";
+import AdminLogin from "./containers/admin/AdminLogin";
+import Dashboard from "./containers/admin/Dashboard";
 import SignUpPage from "./containers/SignupPage";
 import HomePage from './containers/HomePage';
 import ProductsPage from './containers/ProductsPage';
@@ -36,6 +39,8 @@ const App = () => {
                <Route path="/login" component={LoginPage} />
                <Route path="/signup" component={SignUpPage} />
                <Route exact path="/update-product/:id" component={UpdateProductPage} />
+               <Route exact path="/admin/login" component={AdminLogin} />
+               <Route exact path="/admin/dashboard" component={Dashboard} />
                <Redirect from="*" to="/" />
             </Switch>
          </BrowserRouter>
