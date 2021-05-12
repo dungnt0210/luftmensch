@@ -34,12 +34,9 @@ export const getProductById = id => dispatch => {
             type: GET_PRODUCT,
             payload: res.data
          });
-         console.log('done');
          dispatch(toggleProductLoading());
       })
-
       .catch(err => {
-         console.log('2112');
          dispatch(toggleProductLoading());
       });
 };
@@ -54,6 +51,22 @@ export const listProducts = () => dispatch => {
             payload: res.data
          });
          console.log(res.data);
+         dispatch(toggleProductLoading());
+      })
+      .catch(err => {
+         dispatch(toggleProductLoading());
+      });
+};
+
+export const listProductByCategory = (cateId) => dispatch => {
+   dispatch(toggleProductLoading());
+   axios
+      .get(`/api/product/category/${cateId}`)
+      .then(res => {
+         dispatch({
+            type: LIST_PRODUCTS,
+            payload: res.data
+         });
          dispatch(toggleProductLoading());
       })
       .catch(err => {

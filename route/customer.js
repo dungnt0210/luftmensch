@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const SECRET = process.env.SECRET;
@@ -8,7 +8,7 @@ const SECRET = process.env.SECRET;
 const Customer = require("../model/Customer");
 
 router.post("/signup", (req, res) => {
-   Customer.findOne({ name: req.body.email }).then(customer => {
+   Customer.findOne({ email: req.body.email }).then(customer => {
       if (customer) {
          return res.status(400).json({ email: "Email already exists" });
       } else {
@@ -38,7 +38,7 @@ router.post("/login", (req, res) => {
        bcrypt.compare(req.body.password, customer.password).then(isMatch => {
           if (isMatch) {
              const payload = {
-                id: customer._id
+                customerId: customer._id
              };
              jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
                 if (err) {
@@ -55,5 +55,36 @@ router.post("/login", (req, res) => {
        });
     });
  });
+
+router.patch("/update/:id",
+ (req, res) => {
+    Customer.findOneAndUpdate(
+       { _id: req.params.id },
+       { $set: req.body },
+       { new: true }
+    )
+       .then(doc => res.status(200).json(doc))
+       .catch(err =>
+          res.status(400).json({ update: "Error updating existing user" })
+       );
+ }
+);
+
+
+router.get("/", (req, res) => {
+   Customer.find()
+      .sort({updatedAt: -1})
+      .populate('addresses')
+      .then(docs => res.status(200).json(docs))
+      .catch(err => res.status(400).json(err));
+}
+);
+
+router.get("/:id", async (req, res) => {
+   await Customer.findOne({ _id: req.params.id })
+       .populate('addresses')
+      .then(doc => res.status(200).json(doc))
+      .catch(err => res.status(400).json(err));
+});
 
 module.exports = router;

@@ -1,17 +1,34 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import Login from "../../components/admin/Login";
-import { Row, Col, Typography} from 'antd';
+import { loginAdmin } from '../../actions/adminAction';
+import { Row, Col, Typography, Form, Input, Button} from 'antd';
 import {LockOutlined} from '@ant-design/icons';
 import './login.scss';
 
-const AdminLogin = ({ adminer, history }) => {
+const layout = {
+   labelCol: { span: 6 },
+  wrapperCol: { span: 10 },
+};
+const tailLayout = {
+wrapperCol: { span: 14 },
+};  
+
+const buttonLayout = {
+  wrapperCol: { offset: 6, span: 12 },
+}; 
+
+const AdminLogin = ({ isAuthenticated, loginAdmin, history }) => {
  
     useEffect(() => {
-       if (adminer.isAuthenticated) {
+       if (isAuthenticated) {
           history.push("/admin");
        }
-    }, []);
+    }, [isAuthenticated, history]);
+
+    const handleSubmit = (values) => {
+      loginAdmin(values);
+   };
+   
     return (
       <div>
          <Row className="main-container">
@@ -19,7 +36,31 @@ const AdminLogin = ({ adminer, history }) => {
             <Col span={10} className="right-col">
                <LockOutlined className="lock-icon"/>
                <Typography.Title level={3}>Sign in</Typography.Title>
-               <Login className="login-form"/>
+            <Form onFinish={handleSubmit} {... layout} className="login-form">
+             <Form.Item label="Username" name="username" {... tailLayout}    
+             rules={[
+                {
+                    required: true,
+                    message: 'Please input your username!',
+                },
+                ]}>
+                <Input />
+            </Form.Item>
+            <Form.Item label="Password" name="password" {... tailLayout}
+             rules={[
+                {
+                    required: true,
+                    message: 'Please input your password!',
+                },
+                ]}>
+                <Input.Password />
+            </Form.Item>
+            <Form.Item {... buttonLayout}>
+                <Button type="primary" htmlType="submit" size="large">
+                SIGN IN
+                </Button>
+            </Form.Item>
+         </Form>
             </Col>
          </Row>
       </div>
@@ -28,8 +69,8 @@ const AdminLogin = ({ adminer, history }) => {
  };
  
  const mapStateToProps = state => ({
-     adminer: state.adminer
+   isAuthenticated: state.adminer.isAuthenticated
  });
  
- export default connect(mapStateToProps)(AdminLogin);
+ export default connect(mapStateToProps, {loginAdmin})(AdminLogin);
  

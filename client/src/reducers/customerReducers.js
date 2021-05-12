@@ -1,10 +1,17 @@
-import {TOGGLE_CUSTOMER_LOADING, SET_CURRENT_CUSTOMER} from '../actions/types';
+import { SET_CURRENT_CUSTOMER, TOGGLE_CUSTOMER_LOADING, UPDATE_CUSTOMER, LIST_CUSTOMERS, TOGGLE_CUSTOMERS_LOADING} from '../actions/types';
+
+import { 
+   TOGGLE_ADDRESS_LOADING,
+} from '../actions/types';
 const isEmpty = require("is-empty");
 
 const initialState = {
    isAuthenticated: false,
    data: {},
-   customerLoading: false
+   customerLoading: false,
+   customersLoading: false,
+   addressesLoading: false,
+   list: []
 };
 export default function(state = initialState, action) {
     switch (action.type) {
@@ -19,7 +26,27 @@ export default function(state = initialState, action) {
              ...state,
              customerLoading: !state.customerLoading
           };
-       default:
+      case TOGGLE_CUSTOMERS_LOADING:
+      return {
+         ...state,
+         customersLoading: !state.customersLoading
+      };
+      case UPDATE_CUSTOMER:
+      return {
+         ...state,
+         data: action.payload
+      };
+      case LIST_CUSTOMERS:
+      return {
+         ...state,
+         list: action.payload
+      };
+      case TOGGLE_ADDRESS_LOADING:
+      return {
+         ...state,
+         addressesLoading: !state.addressesLoading
+      };
+      default:
           return state;
     }
  }

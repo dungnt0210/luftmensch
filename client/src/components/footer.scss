@@ -1,0 +1,25 @@
+.ant-col-12 {
+  padding: 40px 10%;
+  .ant-typography {
+    display: block;
+  }
+}
+.ant-layout-footer {
+  padding: 0;
+  width: 100%;
+}
+.left-footer-col {
+  background-color: #2c241d;
+  .ant-typography {
+    color: #beb9b4;
+  }
+}
+.right-footer-col {
+  background-color: #594e45;
+  .ant-typography {
+    color: #f3efeb;
+  }
+  .ant-btn {
+    background-color: #c39d65;
+  }
+}

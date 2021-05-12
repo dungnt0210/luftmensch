@@ -14,15 +14,7 @@ const Customer = {
       type: String,
       required: true
    },
-   gender: {
-      type: String
-   },
-   postCode: {
-    type: String
-  },
-   address: {
-      type: String
-   },
+   addresses: [{type: ObjectId, ref: 'Address' }],
    birthday: {
       type: Date
    },

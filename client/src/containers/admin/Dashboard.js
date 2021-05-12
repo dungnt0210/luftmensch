@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Typography } from 'antd';
-import { BrowserRouter as Router, Link, Route, Switch, useRouteMatch } from "react-router-dom";
+import { Layout, Menu } from 'antd';
+import "antd/dist/antd.css";
+import { setCurrentAdmin, logoutAdmin } from "../../actions/adminAction";
+import { BrowserRouter as Router, Link, Redirect, Route, Switch, useRouteMatch } from "react-router-dom";
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -9,18 +11,21 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import './dashboard.scss';
+import { connect } from "react-redux";
 import Tested from './Tested';
-import Test from './Test';
-import Rendering from './Rendering';
+import ListAdmin from './ListAdmin';
+import CustomerTable from './customer/CustomerTable';
+import CustomerUpdate from './customer/CustomerUpdate';
 
 const { Header, Sider, Content } = Layout;
-const Dashboard = ({ history }) => {
-    
+
+const Dashboard = ({ adminer, history, setCurrentAdmin, logoutAdmin }) => {
+  
     // useEffect(() => {
     //     if (!adminer.isAuthenticated) {
     //        history.push("/admin/login");
     //     }
-    //  }, []);
+    //  }, [adminer.isAuthenticated, history]);
     
     const [collapsed, setCollapsed] = useState(false);
     let { path, url } = useRouteMatch();
@@ -30,8 +35,6 @@ const Dashboard = ({ history }) => {
         setCollapsed(!collapsed);
     }
 
-
-    
     return (  
       <Router>
         <Layout>
@@ -45,10 +48,10 @@ const Dashboard = ({ history }) => {
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
             <Menu.Item key="1" icon={<UserOutlined />}>
-              <Link to={`${url}/rendering`}>Test 1</Link>
+              <Link to={`${url}/list-admin`}>List Admin</Link>
             </Menu.Item>
             <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-              <Link to={`${url}/test`}>Test</Link>
+              <Link to={`${url}/customer`}>Customer</Link>
             </Menu.Item>
             <Menu.Item key="3" icon={<UploadOutlined />}>
               <Link to={`${url}/tested`}>Tested</Link>
@@ -71,9 +74,11 @@ const Dashboard = ({ history }) => {
             }}
           >
             <Switch>
-               <Route path={`${path}/rendering`} exact component={Rendering} />
-               <Route path={`${path}/test`} exact component={Test} />
+               <Route path={`${path}/list-admin`} exact component={ListAdmin} />
+               <Route path={`${path}/customer/update/:id`} exact component={CustomerUpdate} />
+               <Route path={`${path}/customer`} exact component={CustomerTable} />
                <Route path={`${path}/tested`} exact component={Tested} />
+               <Redirect from="*" to="/admin/dashboard" />
             </Switch>
           </Content>
         </Layout>
@@ -82,6 +87,12 @@ const Dashboard = ({ history }) => {
     );
  };
  
+const mapStateToProps = state => ({
+  adminer: state.adminer
+});
 
- export default Dashboard;
+export default connect(
+  mapStateToProps,
+  {setCurrentAdmin, logoutAdmin}
+)(Dashboard);
  

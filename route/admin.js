@@ -1,13 +1,32 @@
 const express = require("express");
 const router = express.Router();
-
+const passport = require("passport");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const SECRET = process.env.SECRET;
 
 const Adminer = require("../model/Adminer");
 
-router.post("/create", (req, res) => {
+router.get("/",
+passport.authenticate('admin-permission', { session: false }),
+(req, res) => {
+   Adminer.find()
+   .sort({ createdAt: -1})
+   .then(docs => res.status(200).json(docs))
+   .catch(err => res.status(400).json(err));
+});
+
+router.delete("/delete/:id",
+passport.authenticate('admin-permission', { session: false }),
+(req, res) => {
+   Adminer.deleteOne({ _id: req.params.id })
+   .then(doc => res.status(200).json(doc))
+   .catch(err => res.status(400).json(err));
+});
+
+router.post("/create",
+// passport.authenticate('admin-permission', { session: false }),
+(req, res) => {
     const newAdminer = new Adminer(req.body);
     // hashing password before storing it in database
     bcrypt.genSalt(10, (err, salt) => {
@@ -24,7 +43,6 @@ router.post("/create", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-   console.log(req.body);
     Adminer.findOne({ username: req.body.username }).then(adminer => {
        if (!adminer) {
           return res.status(404).json({ message: "Adminer not found" });
@@ -33,7 +51,7 @@ router.post("/login", (req, res) => {
        bcrypt.compare(req.body.password, adminer.password).then(isMatch => {
           if (isMatch) {
              const payload = {
-                id: adminer._id
+                adminId: adminer._id
              };
              jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
                 if (err) {
@@ -50,5 +68,20 @@ router.post("/login", (req, res) => {
        });
     });
  });
+
+ router.patch("/update/:adminId",
+   passport.authenticate('admin-permission', { session: false }),
+   (req, res) => {
+      Adminer.findOneAndUpdate(
+         { _id: req.params.adminId },
+         { $set: req.body },
+         { new: true }
+      )
+         .then(doc => res.status(200).json(doc))
+         .catch(err =>
+            res.status(400).json({ update: "Error updating existing user" })
+         );
+   }
+);
 
 module.exports = router;

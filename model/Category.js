@@ -15,6 +15,13 @@ const Category = {
    parentCate:  {
       type: ObjectId, 
       ref: 'Category'
+   },
+   childCate: [{
+      type: ObjectId, 
+      ref: 'Category'
+   }],
+   mainCate: {
+      type: Boolean
    }
 };
 

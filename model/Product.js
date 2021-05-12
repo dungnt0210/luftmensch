@@ -26,8 +26,7 @@ const Product = {
     default: false
    },
    qty: {
-    type: Number,
-    required: true
+    type: Number
    },
    description: {
       type: String
@@ -37,10 +36,13 @@ const Product = {
       type: ObjectId,
       ref: 'User'
    },
-   color: {
-      type: String
-   },
-   size: [{name: String, nums: Number}],
+   options: [
+      { color: { name: String,
+          hexCode: String,
+          sizes: [ {size: String, count: Number} ]
+      }
+    }
+   ],
    collar: {
     type: String
    },
@@ -49,20 +51,18 @@ const Product = {
     default: false
    },
    brand: {
-    type: String
+      type: ObjectId,
+      ref: 'Brand'
    },
-   material: {
-      type: Array,
-      default: []
-   },
+   material: [{ name: String, percent: Number}],
    style: {
     type: String
    },
    discount: [{type: ObjectId, ref: 'Discount' }],
-   categories: [{
+   category: {
       type: ObjectId,
       ref: 'Category'
-   }],
+   },
    review: [{type: ObjectId, ref: 'Review'}]
 };
 

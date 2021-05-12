@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Category = require("../model/Category");
+const Product = require("../model/Product");
 
 router.post("/create", (req, res) => {
       const newCate = new Category(req.body);
@@ -12,7 +13,8 @@ router.post("/create", (req, res) => {
 );
 
 router.get("/", (req, res) => {
-      Category.find()
+      Category.find({mainCate: true})
+         .populate("childCate")
          .then(docs => res.status(200).json(docs))
          .catch(err => res.status(400).json(err));
    }

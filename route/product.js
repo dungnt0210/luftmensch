@@ -4,7 +4,7 @@ const Product = require("../model/Product");
 const multer = require("multer");
 const fs = require("fs");
 
-var tempDir = 'client/public/product/temp';
+var tempDir = 'client/public/product-img/temp';
 var tempDirName = tempDir + '/';
 var imgFront = 'img-front';
 var imgBehind = 'img-behind';
@@ -39,7 +39,7 @@ var storage = multer.diskStorage({
              message: `Cannot upload files. Error is ${err}`
            });
          } else {
-            let productPath = 'client/public/product/' + req.query.productId + '/';
+            let productPath = 'client/public/product-img/' + req.query.productId + '/';
             fs.rename(tempDirName + req.files[imgFront][0].filename, productPath + imgFront + fileType, err => res.status(400));
             fs.rename(tempDirName + req.files[imgBehind][0].filename, productPath + imgBehind + fileType, err => res.status(400));
             fs.rename(tempDirName + req.files[imgLeft][0].filename, productPath + imgLeft + fileType, err => res.status(400));
@@ -65,7 +65,21 @@ router.post("/create", (req, res) => {
          .catch(err => res.json(err));
    }
 );
-
+router.post("/updatemany", (req, res) => {
+   Product.find({})
+      .then(docs => {
+         docs.forEach(async doc => {
+            doc.images =[];
+            await doc.images.push('/product-img/' + doc._id + '/img-front.png');
+            await doc.images.push('/product-img/' + doc._id + '/img-behind.png');
+            await doc.images.push('/product-img/' + doc._id + '/img-right.png');
+            await doc.images.push('/product-img/' + doc._id + '/img-left.png');
+            doc.save();
+         }).then( () => res.json(200))
+      })
+      .catch(err => res.status(400).json(err));
+}
+);
 router.get("/", (req, res) => {
       Product.find()
          .then(docs => res.status(200).json(docs))
@@ -75,15 +89,14 @@ router.get("/", (req, res) => {
 
 router.get("/category/:cateId", (req, res) => {
    Product
-      .find({categories: req.params.cateId})
+      .find({category: req.params.cateId})
       .then(docs => res.status(200).json(docs))
       .catch(err => res.status(400).json(err));
 }
 );
 
 router.get("/:id", async (req, res) => {
-   console.log(req.params.id);
-   await Product.find({ _id: req.params.id })
+   await Product.findOne({ _id: req.params.id })
       .then(doc => res.status(200).json(doc))
       .catch(err => res.status(400).json(err));
 });
