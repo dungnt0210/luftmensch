@@ -14,10 +14,15 @@ const Customer = {
       type: String,
       required: true
    },
+   phoneNumber: {
+      type: String
+   },
    addresses: [{type: ObjectId, ref: 'Address' }],
    birthday: {
       type: Date
    },
+   cart: [{ productId: {type: ObjectId, ref: 'Product' }, options: { qty: Number, size: String, color: String }}],
+   wishlist: [{type: ObjectId, ref: 'Product' }],
    orders: [{type: ObjectId, ref: 'Order' }],
 };
 

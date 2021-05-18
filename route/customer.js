@@ -10,7 +10,7 @@ const Customer = require("../model/Customer");
 router.post("/signup", (req, res) => {
    Customer.findOne({ email: req.body.email }).then(customer => {
       if (customer) {
-         return res.status(400).json({ email: "Email already exists" });
+         return res.status(400).json({ error: "Email already exists" });
       } else {
          const newCustomer = new Customer(req.body);
          // hashing password before storing it in database
@@ -21,12 +21,70 @@ router.post("/signup", (req, res) => {
                   .save()
                   .then(doc => res.json(doc))
                   .catch(err =>
-                     console.log({ err })
+                     console.log({ error: err })
                   );
             });
          });
       }
    });
+});
+
+router.patch("/add-to-cart",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   let cart = [];
+   await Customer.findOne({ _id: req.user._id })
+      .then(doc => cart = doc.cart);
+   let key = cart.findIndex(item => 
+      item.productId == req.body.productId && 
+      item.options.size == req.body.options.size && 
+      item.options.color == req.body.options.color );
+   if (key === -1) {
+      Customer.findOneAndUpdate(
+         { _id: req.user._id },
+         { $push: {cart: req.body } },
+         { new: true }
+         )
+      .populate('cart.productId', 'name price images')
+      .then(doc => res.json(doc.cart));
+   } else {
+         cart[key].options.qty = cart[key].options.qty + parseInt(req.body.options.qty);
+         Customer.findOneAndUpdate(
+            { _id: req.user._id },
+            { $set: {cart: cart } },
+            { new: true }
+            )
+         .populate('cart.productId', 'name price images')
+         .then(doc => res.json(doc.cart));
+      }
+});
+
+router.patch("/add-to-wishlist",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   Customer.findOneAndUpdate(
+      { _id: req.user._id },
+      { $push: {wishlist: req.body.productId } },
+      { new: true }
+      )
+   .populate('wishlist', 'name price images')
+   .then(doc => res.json(doc.wishlist))
+   .catch(err => res.status(400).json({error: err}));
+   ;
+});
+
+router.patch("/remove-from-wishlist",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   Customer.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: {wishlist: req.body.productId } },
+      { new: true }
+      )
+   .populate('wishlist', 'name price images')
+   .then(doc => res.json(doc.wishlist))
+   .catch(err => res.status(400).json({error: err}));
+   ;
 });
 
 router.post("/login", (req, res) => {
@@ -69,7 +127,6 @@ router.patch("/update/:id",
        );
  }
 );
-
 
 router.get("/", (req, res) => {
    Customer.find()

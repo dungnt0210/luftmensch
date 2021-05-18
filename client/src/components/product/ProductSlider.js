@@ -6,17 +6,19 @@ import ImageGallery from 'react-image-gallery';
 const ProductSlider = ({data}) => {
     const images = data.images ? data.images.map(item => {
     return {
-        original: item.value,
-        thumnail: item.value
+        original: item,
+        thumbnail: item
     }
     } 
-    ) :[];
+    ) : [];
+    console.log(images);
    return (
     <div className="product-slider">
         {images? <ImageGallery items={images} thumbnailPosition="left" showNav={false} showBullets={true}
             showFullscreenButton={false}
             showPlayButton={false}
         /> : null}
+        {    console.log(images)}
     </div>
    );
 };

@@ -9,11 +9,16 @@ import {
     HeartOutlined
   } from '@ant-design/icons';
 
-const Header = ({list , isAuthenticated, history}) => {
+const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, toggleWishlist}) => {
     const [current, setCurrent] = useState('');
     const handleClick = (e) => {
         setCurrent(e.key);
       };
+    const handleRightClick = (e) => {
+        if (e.key === "search") toggleSearch();
+        if (e.key === "cart") toggleCart();
+        if (e.key === "wishlist") toggleWishlist();
+    }
     const linkMainCate = ({key, domEvent}) => {
         history.push(`/main-cate/${key}`);
     }
@@ -38,7 +43,7 @@ const Header = ({list , isAuthenticated, history}) => {
                 <Link to="/journal">Journal</Link>
             </Menu.Item>
         </Menu>
-        <Menu onClick={handleClick} mode="horizontal" className="menu right-menu">
+        <Menu onClick={handleRightClick} mode="horizontal" className="menu right-menu">
             <Menu.Item key="search" icon={<SearchOutlined />}/>
             <Menu.Item key="wishlist" icon={<HeartOutlined />}/>
             {isAuthenticated ? 

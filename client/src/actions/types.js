@@ -32,3 +32,11 @@ export const CREATE_CATEGORY = "CREATE_CATEGORY";
 export const UPDATE_CATEGORY = "UPDATE_CATEGORY";
 export const GET_CATEGORIES = "GET_CATEGORIES";
 export const GET_CHILD_CATES = "GET_CHILD_CATES";
+
+export const TOGGLE_CART = "TOGGLE_CART";
+export const TOGGLE_WISHLIST = "TOGGLE_WISHLIST";
+export const TOGGLE_SEARCH = "TOGGLE_SEARCH";
+
+export const SET_CART  = "SET_CART";
+export const SET_WISHLIST  = "SET_WISHLIST";
+export const SET_TOTAL = "SET_TOTAL";

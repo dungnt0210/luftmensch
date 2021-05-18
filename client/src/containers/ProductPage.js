@@ -1,17 +1,14 @@
 import React, {useEffect} from "react";
 import { connect } from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import {getProductById} from '../actions/productAction';
 import ProductSlider from '../components/product/ProductSlider';
 import ProductInfo from '../components/product/ProductInfo';
 import PropTypes from "prop-types";
 
 import { Card, Col, Row, Typography } from 'antd';
-import {
-    HeartOutlined,
-    ShoppingOutlined
-  } from '@ant-design/icons';
 
-const ProductPage = ({getProductById, match, loading}) => {
+const ProductPage = ({getProductById, match, history, loading}) => {
     useEffect(() => {
         getProductById(match.params.id);
      }, [getProductById, match.params.id]);
@@ -19,10 +16,10 @@ const ProductPage = ({getProductById, match, loading}) => {
     <div className="site-card-wrapper">
     <Row gutter={24}>
         <Col span={14}>
-            <ProductSlider />
+            <ProductSlider history={history} />
         </Col>
         <Col span={10}>
-            <ProductInfo />
+            <ProductInfo history={history} />
         </Col>
     </Row>
   </div>
@@ -33,8 +30,8 @@ ProductPage.propTypes = {
  data: PropTypes.object.isRequired
 };
 
-export default connect(
+export default withRouter(connect(
     null,
     {getProductById}
-  )(ProductPage);
+  )(ProductPage));
    
