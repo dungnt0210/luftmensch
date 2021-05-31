@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import jwt_decode from "jwt-decode";
+import store from "./store";
 import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
 import customerToken from "./utils/customerToken";
 import HomePage from './containers/HomePage';
@@ -9,28 +10,39 @@ import CheckoutPage from './containers/CheckoutPage';
 
 import Header from './components/Header';
 import Login from './components/customer/Login';
+import Account from './components/customer/Account';
+
 import Footer from './components/Footer';
 import { connect } from 'react-redux';
 import { getCategories } from './actions/categoryAction';
+import { logoutCustomer, setCurrentCustomer } from './actions/customerAction';
 import { toggleCart, toggleSearch, toggleWishlist } from './actions/globalAction';
 import './main.scss';
 import { Drawer, Layout, Button } from 'antd';
 import Cart from './containers/Cart';
 import Wishlist from './containers/Wishlist';
 
-// if (localStorage.jwtToken) {
-//     const token = localStorage.jwtToken;
-//     customerToken(token);
-//     const decoded = jwt_decode(token);
-//     store.dispatch(setCurrentCustomer(decoded));
-//     const currentTime = Date.now() / 1000;
-//     if (decoded.exp < currentTime) {
-//         store.dispatch(logoutCustomer());
-//         window.location.href = "./loginPage";
-//     }
-// }
+if (localStorage.customerToken) {
+    const token = localStorage.customerToken;
+    customerToken(token);
+    const decoded = jwt_decode(token);
+    store.dispatch(setCurrentCustomer(decoded));
+    const currentTime = Date.now() / 1000;
+    if (decoded.exp < currentTime) {
+        store.dispatch(logoutCustomer());
+        window.location.href = "./loginPage";
+    }
+}
 
-const Main = ({getCategories, toggleCart, toggleSearch, toggleWishlist, list, isAuthenticated, global}) => {
+const Main = ({
+    getCategories,
+    toggleCart,
+    toggleSearch,
+    toggleWishlist,
+    logoutCustomer,
+    list,
+    isAuthenticated,
+    global}) => {
 
     useEffect( () => {
         getCategories();
@@ -43,14 +55,15 @@ const Main = ({getCategories, toggleCart, toggleSearch, toggleWishlist, list, is
                     isAuthenticated={isAuthenticated} 
                     toggleCart={toggleCart} 
                     toggleWishlist={toggleWishlist} 
-                    toggleSearch={toggleSearch}/>
+                    toggleSearch={toggleSearch}
+                    logoutCustomer={logoutCustomer}
+                    />
                 </Layout.Header>
                 <Layout.Content>
                     <Switch>
                         <Route path="/customer/login" component={Login} />
+                        <Route path="/customer/account" component={Account} />
                         <Route path="/checkout" component={CheckoutPage} />
-
-                        {/* <Route path="/product/:id" component={ProductPage} /> */}
                         <Route path="/product/:id" component={ProductPage} />
                         <Route path="/category/:id" component={CategoryPage} />
                         <Route path="/" component={HomePage} />
@@ -68,7 +81,9 @@ const Main = ({getCategories, toggleCart, toggleSearch, toggleWishlist, list, is
                 onClose={toggleCart}
                 visible={global.cartOpened}
             >
-                <Cart/>
+                <Cart
+                    isAuthenticated={isAuthenticated}
+                />
                 <Link to='/checkout'><Button size="large" type="primary">Go to checkout</Button></Link>
             </Drawer>
             <Drawer
@@ -78,7 +93,9 @@ const Main = ({getCategories, toggleCart, toggleSearch, toggleWishlist, list, is
                 onClose={toggleWishlist}
                 visible={global.wishlistOpened}
             >
-                <Wishlist />
+                <Wishlist 
+                    isAuthenticated={isAuthenticated}
+                 />
             </Drawer>
             <Drawer
                 title="Search"
@@ -99,4 +116,4 @@ const Main = ({getCategories, toggleCart, toggleSearch, toggleWishlist, list, is
     global: state.global
   });
   
- export default connect(mapStateToProps, {getCategories, toggleCart, toggleSearch, toggleWishlist})(Main);
+ export default connect(mapStateToProps, {getCategories, toggleCart, toggleSearch, toggleWishlist, logoutCustomer})(Main);

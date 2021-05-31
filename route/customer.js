@@ -73,6 +73,30 @@ async (req, res) => {
    ;
 });
 
+router.get("/wishlist",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   Customer.findOne(
+      { _id: req.user._id }
+      )
+   .populate('wishlist', 'name price images')
+   .then(doc => res.json(doc.wishlist))
+   .catch(err => res.status(400).json({error: err}));
+   ;
+});
+
+router.get("/cart",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   Customer.findOne(
+      { _id: req.user._id }
+      )
+   .populate('cart.productId', 'name price images')
+   .then(doc => res.json(doc.cart))
+   .catch(err => res.status(400).json({error: err}));
+   ;
+});
+
 router.patch("/remove-from-wishlist",
 passport.authenticate('customer-permission', { session: false }),
 async (req, res) => {
@@ -83,6 +107,20 @@ async (req, res) => {
       )
    .populate('wishlist', 'name price images')
    .then(doc => res.json(doc.wishlist))
+   .catch(err => res.status(400).json({error: err}));
+   ;
+});
+
+router.patch("/remove-from-cart",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   Customer.findOneAndUpdate(
+      { _id: req.user._id },
+      { $pull: {cart: {_id: req.body.itemId}  } },
+      { new: true }
+      )
+   .populate('cart.productId', 'name price images')
+   .then(doc => res.json(doc.cart))
    .catch(err => res.status(400).json({error: err}));
    ;
 });

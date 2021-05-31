@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from 'react-redux';
 import ImageGallery from 'react-image-gallery';
+import './slider.scss';
 
 const ProductSlider = ({data}) => {
     const images = data.images ? data.images.map(item => {
@@ -11,7 +12,6 @@ const ProductSlider = ({data}) => {
     }
     } 
     ) : [];
-    console.log(images);
    return (
     <div className="product-slider">
         {images? <ImageGallery items={images} thumbnailPosition="left" showNav={false} showBullets={true}

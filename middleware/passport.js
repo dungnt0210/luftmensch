@@ -26,7 +26,6 @@ module.exports = passport => {
    );
    passport.use('customer-permission',
         new JwtStrategy(opts, (jwt_payload, done) => {
-           console.log(1234)
             Customer.findOne({ _id: jwt_payload.customerId })
             .then(customer => {
                 if (customer) {

@@ -3,41 +3,41 @@
   height: 80px;
 }
 .container {
-    width: 80%;
-    display: flex;
-    margin: auto;
-    justify-content: space-between;
+  width: 80%;
+  display: flex;
+  margin: auto;
+  justify-content: space-between;
 
-    .menu {
-        width: 70%;
-        height: 80px;
-        font-size: 14px;
-        font-weight: 400;
-      
-        .header-logo {
-          img {
-            height: 100%;
-          }
-        }
-        li {
-          height: 100%;
-        }
-        .cate-item {
-          line-height: 80px;
-          &:hover {
-            font-weight: 700;
-          }
-        }
+  .menu {
+    width: 70%;
+    height: 80px;
+    font-size: 14px;
+    font-weight: 400;
+
+    .header-logo {
+      img {
+        height: 100%;
       }
-      .right-menu {
-        line-height: 80px;
-        width: 20%;
-        .ant-menu-item-icon, .anticon-user{
-            svg {
-                width: 1.4em;
-                height: 1.4em;
-            }
-        }
     }
+    li {
+      height: 100%;
+    }
+    .cate-item {
+      line-height: 80px;
+      &:hover {
+        font-weight: 700;
+      }
+    }
+  }
+  .right-menu {
+    line-height: 80px;
+    width: 20%;
+    .ant-menu-item-icon,
+    .anticon-user {
+      svg {
+        width: 1.4em;
+        height: 1.4em;
+      }
+    }
+  }
 }
-

@@ -9,11 +9,16 @@ import {
     HeartOutlined
   } from '@ant-design/icons';
 
-const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, toggleWishlist}) => {
+const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, toggleWishlist, logoutCustomer}) => {
     const [current, setCurrent] = useState('');
     const handleClick = (e) => {
         setCurrent(e.key);
       };
+    const handleCustomerClick = (e) => {
+        if (e.key === 'logout') {
+            logoutCustomer();
+        }
+    };
     const handleRightClick = (e) => {
         if (e.key === "search") toggleSearch();
         if (e.key === "cart") toggleCart();
@@ -21,6 +26,9 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
     }
     const linkMainCate = ({key, domEvent}) => {
         history.push(`/main-cate/${key}`);
+    }
+    const linkCustomer = ({key, domEvent}) => {
+        history.push(`/customer/account`);
     }
     return (
         <div className="container">
@@ -47,13 +55,13 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
             <Menu.Item key="search" icon={<SearchOutlined />}/>
             <Menu.Item key="wishlist" icon={<HeartOutlined />}/>
             {isAuthenticated ? 
-                (<Menu.Item key="customer" icon={<UserOutlined />}/>) :
-                (<Menu.SubMenu key="customer-popup"  icon={<UserOutlined />} >
+                (<Menu.SubMenu key="customer-popup" onClick={handleCustomerClick} onTitleClick={linkCustomer} icon={<UserOutlined />} >
                     <Menu.Item key="customer-details">My Details</Menu.Item>
                     <Menu.Item key="customer-orders" >My Orders</Menu.Item>
                     <Menu.Item key="customer-addresses" >My Addresses</Menu.Item>
                     <Menu.Item key="logout" >Sign out</Menu.Item>
-                </Menu.SubMenu>)
+                </Menu.SubMenu>) :
+                (<Menu.Item key="customer" icon={<UserOutlined />}><Link to="/customer/login"/></Menu.Item>)
             }
             <Menu.Item key="cart" icon={<ShoppingOutlined />}/>
         </Menu>

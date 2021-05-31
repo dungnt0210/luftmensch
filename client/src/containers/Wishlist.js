@@ -5,7 +5,19 @@ import { Col , Button, Typography, Image, Divider, Row } from 'antd';
 import {
     DeleteOutlined
   } from '@ant-design/icons';
-const Wishlist = ({wishlist, loading,  isAuthenticated}) => {
+  import { getWishlist, removeFromWishlist } from '../actions/customerAction';
+
+const Wishlist = ({wishlist, loading,  isAuthenticated, getWishlist, removeFromWishlist}) => {
+    useEffect( () => {
+        if(isAuthenticated) {
+            getWishlist();
+        }
+    },[isAuthenticated, getWishlist, removeFromWishlist]);
+
+    const handleRemove = (e, productId) => {
+        e.preventDefault();
+        removeFromWishlist(productId);
+    }
    return (
        <div>
         {isAuthenticated && wishlist ? 
@@ -22,12 +34,11 @@ const Wishlist = ({wishlist, loading,  isAuthenticated}) => {
                         <Col span={12}>
                             <Link to={`/product/${item._id}`}>{item.name}</Link>
                             <Typography.Paragraph>${item.price}</Typography.Paragraph>
-                            <Button type="danger" icon={<DeleteOutlined/>}>Delete</Button>
+                            <Button type="danger" onClick={e => handleRemove(e, item._id)} icon={<DeleteOutlined/>}>Remove</Button>
                         </Col>
                     </Row>
                         <Divider />
                     </div>
-
                 )
             )
              :
@@ -39,10 +50,9 @@ const Wishlist = ({wishlist, loading,  isAuthenticated}) => {
    const mapStateToProps = state => ({
     loading: state.customer.customerLoading,
     wishlist: state.customer.wishlist,
-    isAuthenticated: state.customer.isAuthenticated
   });
    export default connect(
     mapStateToProps,
-    {}
+    {getWishlist, removeFromWishlist}
   )(Wishlist);
    

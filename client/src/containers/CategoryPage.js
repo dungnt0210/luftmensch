@@ -26,8 +26,9 @@ const CategoryPage = ({
         let key = wishlist.findIndex(item => item._id == productId);
         if (key === -1) {
           addToWishlist(productId, wishlist, isAuthenticated, history);
-        } else {
           message.success('This product is added to your wishlist');
+        } else {
+          message.warn('This product is already added to your wishlist');
         }
     }
    return (

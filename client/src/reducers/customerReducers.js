@@ -32,7 +32,7 @@ export default function(state = initialState, action) {
           return {
              ...state,
              isAuthenticated: !isEmpty(action.payload),
-             data: action.payload,
+             data: action.payload
           };
       case SET_CART:
       return {
@@ -47,7 +47,7 @@ export default function(state = initialState, action) {
       case SET_WISHLIST:
       return {
          ...state,
-         wishlist: action.payload,
+         wishlist: action.payload.reverse(),
       };
       case TOGGLE_CUSTOMER_LOADING:
           return {

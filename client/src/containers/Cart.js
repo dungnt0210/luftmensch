@@ -5,8 +5,17 @@ import { Col , Button, Typography, Image, Divider, Row, InputNumber } from 'antd
 import {
     DeleteOutlined
   } from '@ant-design/icons';
-const Cart = ({cart, total, loading, isAuthenticated}) => {
-
+import { getCart, removeFromCart } from '../actions/customerAction';
+const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart}) => {
+    useEffect( () => {
+        if(isAuthenticated) {
+            getCart();
+        }
+    },[isAuthenticated, getCart, removeFromCart]);
+    const handleRemove = (e, index) => {
+        e.preventDefault();
+        removeFromCart(cart, isAuthenticated, index);
+    }
    return (
     <>
        <div className="cart-container">
@@ -27,7 +36,7 @@ const Cart = ({cart, total, loading, isAuthenticated}) => {
                             <Typography.Paragraph>Color: {item.options.color}</Typography.Paragraph>
                             <Typography.Paragraph>Size: {item.options.size}</Typography.Paragraph>
                             <Typography.Paragraph>Qty: <InputNumber value={item.options.qty}/></Typography.Paragraph>
-                            <Button type="danger" icon={<DeleteOutlined/>}>Remove</Button>
+                            <Button type="danger" onClick={e => handleRemove(e, index)} icon={<DeleteOutlined/>}>Remove</Button>
                         </Col>
                     </Row>
                         <Divider />
@@ -49,11 +58,10 @@ const Cart = ({cart, total, loading, isAuthenticated}) => {
    const mapStateToProps = state => ({
     loading: state.customer.customerLoading,
     cart: state.customer.cart,
-    isAuthenticated: state.customer.isAuthenticated,
     total: state.customer.total
   });
    export default connect(
     mapStateToProps,
-    {}
+    {getCart, removeFromCart}
   )(Cart);
    

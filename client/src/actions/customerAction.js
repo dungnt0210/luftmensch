@@ -11,7 +11,6 @@ import { SET_CURRENT_CUSTOMER,
    SET_WISHLIST,
    SET_TOTAL
 } from "./types";
-import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 export const registerCustomer = (data, history) => dispatch => {
    dispatch(toggleCustomerLoading());
@@ -37,7 +36,7 @@ export const loginCustomer = (data, history) => dispatch => {
       .post("/api/customer/login", data)
       .then(res => {
          const { token } = res.data;
-         localStorage.setItem("jwtToken", token);
+         localStorage.setItem("customerToken", token);
          customerToken(token);
          const decoded = jwt_decode(token);
          dispatch(setCurrentCustomer(decoded));
@@ -126,7 +125,7 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
       .then(res => {
          dispatch({
             type: SET_CART,
-            payload: res.data
+            payload: res.data.reverse()
          });
          dispatch(setTotal(cart));
       })
@@ -140,10 +139,37 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
          item.options.size == product.options.size && 
          item.options.color == product.options.color );
       if (key === -1) {
-         cart.push(product);
+         cart.unshift(product);
       } else {
          cart[key].options.qty = cart[key].options.qty + parseFloat(product.options.qty);
       }
+      dispatch({
+         type: SET_CART,
+         payload: cart
+      });
+      dispatch(setTotal(cart));
+      dispatch(toggleCustomerLoading());
+   }
+};
+
+export const removeFromCart = (cart, isAuthenticated, index) => dispatch => {
+   dispatch(toggleCustomerLoading());
+   if (isAuthenticated) {
+      axios
+      .patch("/api/customer/remove-from-cart", {itemId: cart[index]._id})
+      .then(res => {
+         dispatch({
+            type: SET_CART,
+            payload: res.data.reverse()
+         });
+         dispatch(setTotal(cart));
+      })
+      .catch(err => {
+         console.log(err);
+         dispatch(toggleCustomerLoading());
+      });
+   } else {
+      cart.splice(index, 1);
       dispatch({
          type: SET_CART,
          payload: cart
@@ -182,8 +208,56 @@ export const addToWishlist = (productId, wishlist, isAuthenticated, history) => 
    }
 };
 
+export const removeFromWishlist = (productId) => dispatch => {
+   dispatch(toggleCustomerLoading());
+   axios
+   .patch("/api/customer/remove-from-wishlist",  {productId: productId})
+   .then(res => {
+      dispatch({
+         type: SET_WISHLIST,
+         payload: res.data
+      });
+      dispatch(toggleCustomerLoading());
+   })
+   .catch(err => {
+      dispatch(toggleCustomerLoading());
+      });
+};
+
+export const getWishlist = () => dispatch => {
+   dispatch(toggleCustomerLoading());
+   axios
+   .get("/api/customer/wishlist")
+   .then(res => {
+      dispatch({
+         type: SET_WISHLIST,
+         payload: res.data
+      });
+      dispatch(toggleCustomerLoading());
+   })
+   .catch(err => {
+      dispatch(toggleCustomerLoading());
+      });
+};
+
+export const getCart = () => dispatch => {
+   dispatch(toggleCustomerLoading());
+   axios
+   .get("/api/customer/cart")
+   .then(res => {
+      dispatch({ 
+         type: SET_CART,
+         payload: res.data
+      });
+      dispatch(toggleCustomerLoading());
+   })
+   .catch(err => {
+      dispatch(toggleCustomerLoading());
+      });
+};
+
 export const logoutCustomer = () => dispatch => {
-   localStorage.removeItem("jwtToken");
+   localStorage.removeItem("customerToken");
    customerToken(false);
    dispatch(setCurrentCustomer({}));
 };
