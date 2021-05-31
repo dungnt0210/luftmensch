@@ -30,3 +30,4 @@ app.use("/review/", require("./route/review"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));
+//"mongodb+srv://dungnt183721:6thsense@cluster0.7fitk.mongodb.net/sixth-sense?retryWrites=true&w=majority"
