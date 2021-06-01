@@ -1,44 +1,66 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { loginCustomer } from '../../actions/customerAction';
+import { Row, Col, Typography, Form, Input, Button} from 'antd';
+import {LockOutlined} from '@ant-design/icons';
 
-import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
-import { connect } from 'react-redux';
-import { logoutCustomer } from '../../actions/customerAction';
-import { Layout, Menu } from 'antd';
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-    UploadOutlined,
-  } from '@ant-design/icons';
-const Account = ({}) => {
+const layout = {
+   labelCol: { span: 6 },
+  wrapperCol: { span: 14 },
+};
+const tailLayout = {
+wrapperCol: { span: 14 },
+};  
 
+const buttonLayout = {
+  wrapperCol: { offset: 6, span: 12 },
+}; 
+
+const Account = ({ isAuthenticated, history }) => {
+
+    const handleSubmit = (values) => {
+      console.log(values);
+   };
+   
     return (
-        <BrowserRouter>
-          <Menu  mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1" icon={<UserOutlined />}>
-              <Link to={"/list-admin"}>List Admin</Link>
-            </Menu.Item>
-            <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-              <Link to={"/customer"}>Customer</Link>
-            </Menu.Item>
-            <Menu.Item key="3" icon={<UploadOutlined />}>
-              <Link to={"/tested"}>Tested</Link>
-            </Menu.Item>
-          </Menu>
-            <Switch>
-                <Route path="/customer/orders/:id" component={Account} />
-                <Route path="/customer/orders" component={Account} />
-                <Route path="/customer/addresses/:id" component={Account} />
-                <Route path="/customer/addresses" component={Account} />
-                <Route path="/customer/reviews" component={Account} />
-                <Route path="/customer/wishlist" component={Account} />
-            </Switch>
-         </BrowserRouter>
+      <div>
+         <Row className="form-container">
+            <Col span={14} >
+               <LockOutlined className="lock-icon"/>
+               <Typography.Title level={3}>Sign in</Typography.Title>
+            <Form onFinish={handleSubmit} {... layout} className="login-form">
+             <Form.Item label="Email" name="email" {... tailLayout}    
+             rules={[
+                {
+                    required: true,
+                    message: 'Please input your email!',
+                },
+                ]}>
+                <Input />
+            </Form.Item>
+            <Form.Item label="Password" name="password" {... tailLayout}
+             rules={[
+                {
+                    required: true,
+                    message: 'Please input your password!',
+                },
+                ]}>
+                <Input.Password />
+            </Form.Item>
+            <Form.Item {... buttonLayout}>
+                <Button type="primary" htmlType="submit" size="large">
+                SIGN IN
+                </Button>
+            </Form.Item>
+         </Form>
+            </Col>
+         </Row>
+      </div>
+      
     );
  };
  const mapStateToProps = state => ({
-    isAuthenticated: state.customer.isAuthenticated
-  });
-  
- export default connect(mapStateToProps, {logoutCustomer})(Account);
+   isAuthenticated: state.customer.isAuthenticated
+ });
+ 
+ export default connect(mapStateToProps, {})(Account);

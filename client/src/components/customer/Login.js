@@ -21,7 +21,7 @@ const Login = ({ isAuthenticated, loginCustomer, history }) => {
  
     useEffect(() => {
        if (isAuthenticated) {
-          history.push("/customer/login");
+          history.push("/customer/account");
        }
     }, [isAuthenticated, history]);
 

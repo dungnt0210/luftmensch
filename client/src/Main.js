@@ -10,7 +10,7 @@ import CheckoutPage from './containers/CheckoutPage';
 
 import Header from './components/Header';
 import Login from './components/customer/Login';
-import Account from './components/customer/Account';
+import CustomerPage from './containers/customer/CustomerPage';
 
 import Footer from './components/Footer';
 import { connect } from 'react-redux';
@@ -62,7 +62,7 @@ const Main = ({
                 <Layout.Content>
                     <Switch>
                         <Route path="/customer/login" component={Login} />
-                        <Route path="/customer/account" component={Account} />
+                        <Route path="/customer/account" component={CustomerPage} />
                         <Route path="/checkout" component={CheckoutPage} />
                         <Route path="/product/:id" component={ProductPage} />
                         <Route path="/category/:id" component={CategoryPage} />
