@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { loginCustomer } from '../../actions/customerAction';
-import { Row, Col, Typography, Form, Input, Button} from 'antd';
+import { Row, Col, Typography, Form, Input, Button, Divider} from 'antd';
 import {LockOutlined} from '@ant-design/icons';
 
 const Account = ({ isAuthenticated, history }) => {
 
    const layout = {
-      labelCol: { span: 6 },
+      labelCol: { span: 5 },
      wrapperCol: { span: 16 },
    };
    const tailLayout = {
@@ -19,9 +19,11 @@ const Account = ({ isAuthenticated, history }) => {
    };
    
     return (
-         <Row className="form-container" wrap={false}>
-            <Col span={12} >
+        <>
+        <Divider orientation="left" plain>Acoount Infomation</Divider>
+         <Row className="form-container" wrap={false}> 
             <Form onFinish={handleSubmit} {...layout} labelAlign="left">
+            <Col span={12} >
              <Form.Item label="Email" name="email"
              rules={[
                 {
@@ -45,10 +47,8 @@ const Account = ({ isAuthenticated, history }) => {
                 Save
                 </Button>
             </Form.Item>
-         </Form>
             </Col>
             <Col  span={12}>
-            <Form onFinish={handleSubmit} >
              <Form.Item label="Email" name="email"
              rules={[
                 {
@@ -67,14 +67,10 @@ const Account = ({ isAuthenticated, history }) => {
                 ]}>
                 <Input.Password />
             </Form.Item>
-            <Form.Item >
-                <Button type="primary" htmlType="submit" size="large">
-                SIGN IN
-                </Button>
-            </Form.Item>
-         </Form>
             </Col>
+         </Form>
          </Row>
+         </>
     );
  };
  const mapStateToProps = state => ({
