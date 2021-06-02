@@ -4,32 +4,25 @@ import { loginCustomer } from '../../actions/customerAction';
 import { Row, Col, Typography, Form, Input, Button} from 'antd';
 import {LockOutlined} from '@ant-design/icons';
 
-const layout = {
-   labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
-};
-const tailLayout = {
-wrapperCol: { span: 14 },
-};  
-
-const buttonLayout = {
-  wrapperCol: { offset: 6, span: 12 },
-}; 
-
 const Account = ({ isAuthenticated, history }) => {
 
+   const layout = {
+      labelCol: { span: 6 },
+     wrapperCol: { span: 16 },
+   };
+   const tailLayout = {
+   wrapperCol: { span: 14 },
+   };  
+   
     const handleSubmit = (values) => {
       console.log(values);
    };
    
     return (
-      <div>
-         <Row className="form-container">
-            <Col span={14} >
-               <LockOutlined className="lock-icon"/>
-               <Typography.Title level={3}>Sign in</Typography.Title>
-            <Form onFinish={handleSubmit} {... layout} className="login-form">
-             <Form.Item label="Email" name="email" {... tailLayout}    
+         <Row className="form-container" wrap={false}>
+            <Col span={12} >
+            <Form onFinish={handleSubmit} {...layout} labelAlign="left">
+             <Form.Item label="Email" name="email"
              rules={[
                 {
                     required: true,
@@ -38,7 +31,7 @@ const Account = ({ isAuthenticated, history }) => {
                 ]}>
                 <Input />
             </Form.Item>
-            <Form.Item label="Password" name="password" {... tailLayout}
+            <Form.Item label="Password" name="password"
              rules={[
                 {
                     required: true,
@@ -47,7 +40,34 @@ const Account = ({ isAuthenticated, history }) => {
                 ]}>
                 <Input.Password />
             </Form.Item>
-            <Form.Item {... buttonLayout}>
+            <Form.Item className="customer-save">
+                <Button type="primary" htmlType="submit" size="large">
+                Save
+                </Button>
+            </Form.Item>
+         </Form>
+            </Col>
+            <Col  span={12}>
+            <Form onFinish={handleSubmit} >
+             <Form.Item label="Email" name="email"
+             rules={[
+                {
+                    required: true,
+                    message: 'Please input your email!',
+                },
+                ]}>
+                <Input />
+            </Form.Item>
+            <Form.Item label="Password" name="password"
+             rules={[
+                {
+                    required: true,
+                    message: 'Please input your password!',
+                },
+                ]}>
+                <Input.Password />
+            </Form.Item>
+            <Form.Item >
                 <Button type="primary" htmlType="submit" size="large">
                 SIGN IN
                 </Button>
@@ -55,8 +75,6 @@ const Account = ({ isAuthenticated, history }) => {
          </Form>
             </Col>
          </Row>
-      </div>
-      
     );
  };
  const mapStateToProps = state => ({

@@ -10,7 +10,7 @@ const Footer = () => {
 
     return(
         <>
-        <Row>
+        <Row className="container-footer">
           <Col span={12} className="left-footer-col">
             <Typography.Title level={2}>Luftmensch</Typography.Title>
             <Typography.Link>About Us</Typography.Link>

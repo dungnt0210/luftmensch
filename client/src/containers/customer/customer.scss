@@ -6,3 +6,11 @@
     display: flex;
     justify-content: space-between;
 }
+.customer-content {
+    width: 65%;
+    .customer-save {
+        .ant-form-item-control-input-content {
+            flex: none;
+        }
+    }
+}
