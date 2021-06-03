@@ -1,13 +1,9 @@
-.customer-menu {
-    width: 30%;
-    height: fit-content;
-}
 .ant-layout-content {
     display: flex;
     justify-content: space-between;
 }
 .customer-content {
-    width: 65%;
+    width: 100%;
     .customer-save {
         margin-bottom: 0;
         .ant-col {
