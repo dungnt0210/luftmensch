@@ -9,6 +9,10 @@
 .customer-content {
     width: 65%;
     .customer-save {
+        margin-bottom: 0;
+        .ant-col {
+            margin-bottom: 20px;
+        }
         .ant-form-item-control-input-content {
             flex: none;
         }

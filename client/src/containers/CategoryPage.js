@@ -33,7 +33,7 @@ const CategoryPage = ({
     }
    return (
     <div className="site-card-wrapper">
-    <Row gutter={24}>
+    <Row gutter={[24, 24]}>
       {list.map(item => 
         (<Col span={8}>
           <Link to={`/product/${item._id}`}>
