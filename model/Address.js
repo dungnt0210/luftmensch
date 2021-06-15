@@ -2,21 +2,28 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const Address = {
+   telephone: {
+      type: String
+   },
    detail: {
       type: String
    },
    commune: {
-      type: String
+      code: String,
+      name: String
    },
    district: {
-    type: String
-    },
+      code: String,
+      name: String
+   },
     province: {
-        type: String
-    },
-   postCode: {
-    type: String
-  }
+      code: String,
+      name: String
+   },
+   isDefault: {
+      type: Boolean,
+      default: false
+   }
 };
 
 const AddressSchema = new Schema(Address, {timestamps: true});

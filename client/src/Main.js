@@ -10,6 +10,8 @@ import CheckoutPage from './containers/CheckoutPage';
 
 import Header from './components/Header';
 import Login from './components/customer/Login';
+import Address from './components/customer/Address';
+
 import CustomerPage from './containers/customer/CustomerPage';
 
 import Footer from './components/Footer';

@@ -1,12 +1,17 @@
 import React, {useEffect} from "react";
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 import { connect } from 'react-redux';
-import { Menu, Tabs } from 'antd';
-import Login from "../../components/customer/Login";
+import { Tabs } from 'antd';
+import { getProfile } from '../../actions/customerAction';
 import Account from "../../components/customer/Account";
+import Address from "../../components/customer/Address";
+import Addresses from "../../components/customer/Addresses";
+
 import "./customer.scss"
-const CustomerPage = ({isAuthenticated}) => {
+const CustomerPage = ({isAuthenticated, logData, defaultAddress, addressList, getProfile}) => {
     const { TabPane } = Tabs;
+    useEffect( () => {
+      getProfile();
+    }, [getProfile])
     return (
         <div className="customer-content">
               <Tabs tabPosition="left">
@@ -14,10 +19,10 @@ const CustomerPage = ({isAuthenticated}) => {
                 <Account />
               </TabPane>
               <TabPane tab="My Addresses" key="customer-addresses">
-                Content of Tab 2
+                <Addresses defaultAddress={defaultAddress} addressList={addressList}/>
               </TabPane>
               <TabPane tab="My Orders" key="customer-orders">
-                Content of Tab 3
+                <Address />
               </TabPane>
               <TabPane tab="My Saved Items" key="customer-wishlist">
                 Content of Tab 4
@@ -30,7 +35,10 @@ const CustomerPage = ({isAuthenticated}) => {
     );
  };
  const mapStateToProps = state => ({
-    isAuthenticated: state.customer.isAuthenticated
+    isAuthenticated: state.customer.isAuthenticated,
+    logData: state.customer.logData,
+    defaultAddress: state.addressData.defaultAddress,
+    addressList: state.addressData.currentList
   });
   
- export default connect(mapStateToProps, {})(CustomerPage);
+ export default connect(mapStateToProps, {getProfile})(CustomerPage);

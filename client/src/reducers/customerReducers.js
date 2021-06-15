@@ -5,8 +5,6 @@ import { SET_CURRENT_CUSTOMER,
    TOGGLE_CUSTOMERS_LOADING,
    SET_CART,
    SET_WISHLIST,
-   ADD_TO_CART,
-   ADD_TO_WISHLIST,
    SET_TOTAL
 } from '../actions/types';
 
@@ -18,6 +16,7 @@ const isEmpty = require("is-empty");
 const initialState = {
    isAuthenticated: false,
    data: {},
+   logData: {},
    cart: [],
    wishlist: [],
    customerLoading: false,
@@ -26,13 +25,14 @@ const initialState = {
    total: 0,
    list: []
 };
+// eslint-disable-next-line import/no-anonymous-default-export
 export default function(state = initialState, action) {
     switch (action.type) {
       case SET_CURRENT_CUSTOMER:
           return {
              ...state,
              isAuthenticated: !isEmpty(action.payload),
-             data: action.payload
+             logData: action.payload
           };
       case SET_CART:
       return {

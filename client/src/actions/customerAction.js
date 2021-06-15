@@ -9,7 +9,9 @@ import { SET_CURRENT_CUSTOMER,
    TOGGLE_CUSTOMERS_LOADING,
    SET_CART,
    SET_WISHLIST,
-   SET_TOTAL
+   SET_TOTAL,
+   SET_CURRENT_LIST_ADDRESS,
+   SET_DEFAULT_ADDRESS
 } from "./types";
 
 export const registerCustomer = (data, history) => dispatch => {
@@ -41,6 +43,31 @@ export const loginCustomer = (data, history) => dispatch => {
          const decoded = jwt_decode(token);
          dispatch(setCurrentCustomer(decoded));
          history.push('/customer/account');
+         dispatch(toggleCustomerLoading());
+      })
+      .catch(err => {
+        console.log(err);
+         dispatch(toggleCustomerLoading());
+      });
+};
+
+export const getProfile = () => dispatch => {
+   dispatch(toggleCustomerLoading());
+   axios
+      .get("/api/customer/my-profile")
+      .then(res => {
+         setCurrentCustomer(res.data);
+         let addresses = res.data.addresses;
+         if (addresses) {
+            dispatch({
+               type: SET_CURRENT_LIST_ADDRESS,
+               payload: addresses.filter(item => !item.isDefault)
+            });
+            dispatch({
+               type: SET_DEFAULT_ADDRESS,
+               payload: addresses.find(item => item.isDefault)
+            });
+         }
          dispatch(toggleCustomerLoading());
       })
       .catch(err => {

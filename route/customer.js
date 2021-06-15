@@ -7,6 +7,16 @@ const SECRET = process.env.SECRET;
 
 const Customer = require("../model/Customer");
 
+router.get("/my-profile",
+passport.authenticate('customer-permission', { session: false }),
+(req, res) => {
+   Customer.findOne({ _id: req.user._id })
+   .populate('addresses')
+   .then(doc => res.json(doc))
+   .catch(err => res.json(err));
+   }
+);
+
 router.post("/signup", (req, res) => {
    Customer.findOne({ email: req.body.email }).then(customer => {
       if (customer) {
