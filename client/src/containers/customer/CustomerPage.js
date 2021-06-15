@@ -5,13 +5,17 @@ import { getProfile } from '../../actions/customerAction';
 import Account from "../../components/customer/Account";
 import Address from "../../components/customer/Address";
 import Addresses from "../../components/customer/Addresses";
-
+import { deleteAddress } from '../../actions/addressAction';
 import "./customer.scss"
-const CustomerPage = ({isAuthenticated, logData, defaultAddress, addressList, getProfile}) => {
+const CustomerPage = ({isAuthenticated, logData, defaultAddress, addressList, getProfile, deleteAddress}) => {
     const { TabPane } = Tabs;
     useEffect( () => {
       getProfile();
     }, [getProfile])
+    const handleDelete = (id) => {
+      deleteAddress(id);
+      getProfile();
+    }
     return (
         <div className="customer-content">
               <Tabs tabPosition="left">
@@ -19,7 +23,7 @@ const CustomerPage = ({isAuthenticated, logData, defaultAddress, addressList, ge
                 <Account />
               </TabPane>
               <TabPane tab="My Addresses" key="customer-addresses">
-                <Addresses defaultAddress={defaultAddress} addressList={addressList}/>
+                <Addresses defaultAddress={defaultAddress} addressList={addressList} handleDelete={handleDelete}/>
               </TabPane>
               <TabPane tab="My Orders" key="customer-orders">
                 <Address />
@@ -41,4 +45,4 @@ const CustomerPage = ({isAuthenticated, logData, defaultAddress, addressList, ge
     addressList: state.addressData.currentList
   });
   
- export default connect(mapStateToProps, {getProfile})(CustomerPage);
+ export default connect(mapStateToProps, {getProfile, deleteAddress})(CustomerPage);

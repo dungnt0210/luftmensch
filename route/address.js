@@ -33,22 +33,32 @@ router.post("/create",
 passport.authenticate('customer-permission', { session: false }),
 (req, res) => {
       const newAddress = new Address(req.body);
+      if (req.body.isDefault &&  req.body.defaultId) {
+         Address.findOneAndUpdate(
+            { _id: req.body.defaultId },
+            { $set: {isDefault: false} },
+            { new: true }
+         ).catch(err => res.json(err));
+      }
       newAddress
          .save()
-         .then(async function(doc) {
-            await Customer.findOneAndUpdate(
+         .then(function(doc) {
+            Customer.findOneAndUpdate(
                 { _id: req.user._id },
                 { $push: {addresses: doc._id } },
                 { new: true }
             )
+            .populate("addresses")
+            .then(customer => res.status(200).json(customer))
             .catch(err => res.json(err));
-            res.json(doc);
          })
          .catch(err => res.json(err));
    }
 );
 
-router.patch("/update/:id", (req, res) => {
+router.patch("/update/:id", 
+passport.authenticate('customer-permission', { session: false }),
+(req, res) => {
       Address.findOneAndUpdate(
          { _id: req.params.id },
          { $set: req.body },
@@ -61,18 +71,43 @@ router.patch("/update/:id", (req, res) => {
    }
 );
 
-router.delete("/delete/:id", (req, res) => {
+router.patch("/set-default", 
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+      await Address.findOneAndUpdate(
+         { _id: req.body.old },
+         { $set: {isDefault: false} },
+         { new: true }
+      )
+      .catch(err =>
+         res.status(400).json({ update: "Error updating existing address" })
+      );
+      await Address.findOneAndUpdate(
+         { _id: req.body.new },
+         { $set: {isDefault: true} },
+         { new: true }
+      )
+      .then( doc => res.status(200).json(doc))
+      .catch(err =>
+         res.status(400).json({ update: "Error updating existing address" })
+      );
+   }
+);
+
+router.delete("/delete/:id",
+passport.authenticate('customer-permission', { session: false }),
+(req, res) => {
       Address.findOneAndDelete({ _id: req.params.id })
-         .then(function(doc) {
-            Customer.findOneAndUpdate(
-                { _id: customerId },
+         .then(async function(doc) {
+            await Customer.findOneAndUpdate(
+                { _id: req.user._id },
                 { $pull: {addresses: doc._id }},
                 { new: true }
             );
              res.status(200).json(doc);
          })
          .catch(err =>
-            res.status(400).json({ delete: "Error deleting a post" })
+            res.status(400).json({ delete: err })
          );
    }
 );

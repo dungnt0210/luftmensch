@@ -9,16 +9,16 @@ const Address = {
       type: String
    },
    commune: {
-      code: String,
-      name: String
+      value: String,
+      label: String
    },
    district: {
-      code: String,
-      name: String
+      value: String,
+      label: String
    },
     province: {
-      code: String,
-      name: String
+      value: String,
+      label: String
    },
    isDefault: {
       type: Boolean,

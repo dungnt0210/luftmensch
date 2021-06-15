@@ -4,14 +4,32 @@ import {
    TOGGLE_ADDRESS_LOADING,
    SET_COMMUNES,
    SET_DISTRICTS,
-   SET_PROVINCES
+   SET_PROVINCES,
+   SET_CURRENT_LIST_ADDRESS,
+   SET_DEFAULT_ADDRESS,
+   SET_CURRENT_CUSTOMER,
+   UPDATE_ADDRESS,
+   DELETE_ADDRESS
 } from "./types";
 
-export const createAddress = (data, history) => dispatch => {
+export const createAddress = (data) => dispatch => {
    dispatch(toggleAddressLoading());
    axios
       .post("/api/address/create", data)
       .then(res => {
+         let addresses = res.data.addresses;
+         dispatch({
+            type: SET_CURRENT_CUSTOMER,
+            payload: res.data
+         });
+         dispatch({
+            type: SET_CURRENT_LIST_ADDRESS,
+            payload: addresses.filter(item => !item.isDefault)
+         });
+         dispatch({
+            type: SET_DEFAULT_ADDRESS,
+            payload: addresses.find(item => item.isDefault)
+         });
          dispatch(toggleAddressLoading());
       })
       .catch(err => {
@@ -24,6 +42,10 @@ export const deleteAddress = (id) => dispatch => {
    axios
       .delete(`/api/address/delete/${id}`)
       .then(res => {
+         dispatch({
+            type: DELETE_ADDRESS,
+            payload: id
+         });
          dispatch(toggleAddressLoading());
       })
       .catch(err => {
@@ -36,6 +58,17 @@ export const updateAddress = (id, data) => dispatch => {
    axios
       .patch(`/api/address/update/${id}`, data)
       .then(res => {
+         if (res.data.isDefault) {
+            dispatch({
+               type: SET_DEFAULT_ADDRESS,
+               payload: res.data
+            });
+         } else {
+            dispatch({
+               type: UPDATE_ADDRESS,
+               payload: res.data
+            });
+         }
          dispatch(toggleAddressLoading());
       })
       .catch(err => {

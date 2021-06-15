@@ -2,7 +2,9 @@ import { SET_PROVINCES,
     SET_DISTRICTS,
     SET_COMMUNES,
     SET_CURRENT_LIST_ADDRESS,
-    SET_DEFAULT_ADDRESS
+    SET_DEFAULT_ADDRESS,
+    UPDATE_ADDRESS,
+    DELETE_ADDRESS
  } from '../actions/types';
  
  const initialState = {
@@ -29,6 +31,18 @@ import { SET_PROVINCES,
             return {
                 ...state,
             defaultAddress: action.payload
+            };
+        case UPDATE_ADDRESS:
+            let currentList = state.currentList.filter(address => address._id !== action.payload._id)
+            return {
+                ...state,
+            currentList: [action.payload, ...currentList]
+            };
+        case DELETE_ADDRESS:
+            currentList = state.currentList.filter(address => address._id !== action.payload)
+            return {
+                ...state,
+            currentList: [...currentList]
             };
         case SET_DISTRICTS:
         return {

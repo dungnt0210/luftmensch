@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { getCommunes, getDistricts, getProvinces } from '../../actions/addressAction';
+import { getCommunes, getDistricts, getProvinces, createAddress, updateAddress } from '../../actions/addressAction';
 import { Form, Input, Select, Modal, Switch} from 'antd';
 
 const Address = ({ communes, 
@@ -9,8 +9,12 @@ const Address = ({ communes,
     getCommunes, 
     getDistricts, 
     getProvinces,
+    createAddress,
+    updateAddress,
     data,
     visible,
+    hasAddress,
+    defaultId,
     onCancel,
     onSave
   }) => {
@@ -22,19 +26,16 @@ const Address = ({ communes,
    const [checkDefault, setCheckDefault] = useState(false);
    useEffect(() => {
      if (!data.isEmpty) {
-      getDistricts(data.province.code);
-      getCommunes(data.province.code, data.district.code);
-      form.setFieldsValue({
-        telephone: data.telephone,
-        detail: data.detail,
-        province: {value: data.province.code, key: data.province.code, label: data.province.name},
-        district: {value: data.district.code, key: data.district.code, label: data.district.name},
-        commune: {value: data.commune.code, key: data.commune.code, label: data.commune.name}
-        });
+      getDistricts(data.province.value);
+      getCommunes(data.province.value, data.district.value);
+      form.setFieldsValue(data);
      }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-
+  useEffect(() => {
+    if (!hasAddress)
+    setCheckDefault(true);
+  }, [hasAddress]);
    const handleChangeProvince = (value) => {
       getDistricts(value.value);
       getCommunes(value, "none");
@@ -44,12 +45,13 @@ const Address = ({ communes,
     getCommunes(form.getFieldValue('province').value, value.value);
     form.resetFields(['commune']);
  };
-  const handleChangeCommune = (value) => {
-    console.log(value);
-  };
     const onCreate = (values) => {
+      if (data.isEmpty) {
+        createAddress({isDefault: checkDefault, defaultId: defaultId, ...values});
+      } else {
+        updateAddress(data._id, values)
+      }
       onSave();
-      console.log(values);
     }
   
     return (
@@ -134,10 +136,10 @@ const Address = ({ communes,
             },
           ]}
         >
-          <Select labelInValue options={communes} onChange={handleChangeCommune}/>
+          <Select labelInValue options={communes}/>
         </Form.Item>
         <Form.Item hidden={!data.isEmpty} label="Default address">
-          <Switch checked={checkDefault} onChange={checked => setCheckDefault(checked)} />
+          <Switch checked={checkDefault} disabled={!hasAddress} onChange={checked => setCheckDefault(checked)} />
         </Form.Item>
       </Form>
     </Modal>
@@ -149,4 +151,4 @@ const Address = ({ communes,
    provinces: state.addressData.provinces
  });
  
- export default connect(mapStateToProps, {getCommunes, getDistricts, getProvinces})(Address);
+ export default connect(mapStateToProps, {getCommunes, getDistricts, getProvinces, createAddress, updateAddress})(Address);
