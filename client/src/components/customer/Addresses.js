@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { List, Card, Row, Col, Divider, Button, Typography } from 'antd';
+import { connect } from 'react-redux';
 
 import { EditOutlined, PlusOutlined , CheckOutlined, DeleteOutlined } from '@ant-design/icons';
 import Address from "./Address";
+import { setDefaultAddress } from '../../actions/addressAction';
 
-const Addresses = ({defaultAddress, addressList, handleDelete}) => {
+const Addresses = ({defaultAddress, addressList, handleDelete, setDefaultAddress}) => {
      const [isEditing, setIsEditing] = useState(false);
      const [checkedAddress, setCheckedAddress] = useState({isEmpty: true});
      const [hasAddress, setHasAddress] = useState(false);
@@ -14,9 +16,8 @@ const Addresses = ({defaultAddress, addressList, handleDelete}) => {
       } else {
         setHasAddress(true);
       }
-     }, [defaultAddress, addressList])
+     }, [defaultAddress])
      const onCancel = () => {
-       console.log(addressList);
        setIsEditing(false);
      }
      const onSave = () => {
@@ -29,6 +30,9 @@ const Addresses = ({defaultAddress, addressList, handleDelete}) => {
     const editAddress = (item) => {
       setIsEditing(true);
       setCheckedAddress({isEmpty: false, ...item});
+    }
+    const handleSetDefault = (newId) => {
+      setDefaultAddress(newId, defaultAddress);
     }
 
     return (
@@ -73,7 +77,7 @@ const Addresses = ({defaultAddress, addressList, handleDelete}) => {
                     <List.Item>
                         <Card title={item.telephone} actions={
                           [
-                            <Button icon={<CheckOutlined />} type="primary" key={`set-default-address-${item.index}`}>Set as default</Button>,
+                            <Button icon={<CheckOutlined />} type="primary" onClick={e => handleSetDefault(item._id)} key={`set-default-address-${item.index}`}>Set as default</Button>,
                             <Button icon={<EditOutlined />} onClick={e => editAddress(item)} key={`edit-address-${item.index}`} >Edit</Button>,
                             <Button icon={<DeleteOutlined />} onClick={e => handleDelete(item._id)} type="danger" key={`delete-address-${item.index}`}>Remove</Button>,
                           ]
@@ -92,4 +96,4 @@ const Addresses = ({defaultAddress, addressList, handleDelete}) => {
     );
 }
 
-export default Addresses;
+export default connect(null, {setDefaultAddress})(Addresses);

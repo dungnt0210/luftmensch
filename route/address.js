@@ -82,7 +82,7 @@ async (req, res) => {
       .catch(err =>
          res.status(400).json({ update: "Error updating existing address" })
       );
-      await Address.findOneAndUpdate(
+      Address.findOneAndUpdate(
          { _id: req.body.new },
          { $set: {isDefault: true} },
          { new: true }

@@ -76,6 +76,27 @@ export const updateAddress = (id, data) => dispatch => {
       });
 };
 
+export const setDefaultAddress = (newId, oldData) => dispatch => {
+   dispatch(toggleAddressLoading());
+   oldData.isDefault = false;
+   axios
+      .patch(`/api/address/set-default`, {old: oldData._id, new: newId})
+      .then(res => {
+         dispatch({
+            type: SET_DEFAULT_ADDRESS,
+            payload: res.data
+         });
+         dispatch({
+            type: UPDATE_ADDRESS,
+            payload: oldData
+         });
+         dispatch(toggleAddressLoading());
+      })
+      .catch(err => {
+         dispatch(toggleAddressLoading());
+      });
+};
+
 export const getCommunes = (provinceCode, districtCode) => dispatch => {
    dispatch(toggleAddressLoading());
    if (districtCode === "none") {

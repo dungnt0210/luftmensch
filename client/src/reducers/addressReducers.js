@@ -33,7 +33,7 @@ import { SET_PROVINCES,
             defaultAddress: action.payload
             };
         case UPDATE_ADDRESS:
-            let currentList = state.currentList.filter(address => address._id !== action.payload._id)
+            let currentList = state.currentList.filter(address => !(address._id === action.payload._id && !address.isDefault) )
             return {
                 ...state,
             currentList: [action.payload, ...currentList]
