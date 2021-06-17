@@ -56,7 +56,7 @@ export const getProfile = () => dispatch => {
    axios
       .get("/api/customer/my-profile")
       .then(res => {
-         setCurrentCustomer(res.data);
+         dispatch(setCurrentCustomer(res.data));
          let addresses = res.data.addresses;
          if (addresses) {
             dispatch({

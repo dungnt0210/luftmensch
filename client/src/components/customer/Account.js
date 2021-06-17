@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { loginCustomer } from '../../actions/customerAction';
-import { Row, Col, Typography, Form, Input, Button, Divider, Checkbox} from 'antd';
-import {LockOutlined} from '@ant-design/icons';
+// import { getProfile } from '../../actions/customerAction';
+import { Row, Col, Form, Input, Button, Divider, Checkbox} from 'antd';
 
-const Account = ({ isAuthenticated, history }) => {
+const Account = ({ logData, history }) => {
 
     const [changeEmail, setChangeEmail] = useState(false);
     const [changePassword, setChangePassword] = useState(false);
-
+    const [accountForm] = Form.useForm();
+    useEffect( () => {
+        accountForm.setFieldsValue({
+            name: logData.name ? logData.name : "",
+            email: logData.email ? logData.email : "",
+        })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [logData])
    const layout = {
       labelCol: { span: 7 },
      wrapperCol: { span: 15 },
    };
-   const tailLayout = {
-   wrapperCol: { span: 14 },
-   };  
    
     const handleSubmit = (values) => {
+        console.log(logData);
       console.log(values);
    };
    
@@ -31,12 +35,12 @@ const Account = ({ isAuthenticated, history }) => {
         <>
         <Divider orientation="left" plain>ACCOUNT INFOMATION</Divider>
          <Row className="form-container" wrap={false}> 
-            <Form onFinish={handleSubmit} {...layout} labelAlign="left">
+            <Form onFinish={handleSubmit} {...layout} labelAlign="left" form={accountForm}>
             <Col span={12} >
              <Form.Item label="Email" name="email"
              rules={[
                 {
-                    required: true,
+                    required: changeEmail,
                     message: 'Please input your email!',
                 },
                 ]}>
@@ -111,8 +115,5 @@ const Account = ({ isAuthenticated, history }) => {
          </>
     );
  };
- const mapStateToProps = state => ({
-   isAuthenticated: state.customer.isAuthenticated
- });
  
- export default connect(mapStateToProps, {})(Account);
+ export default connect(null, {})(Account);

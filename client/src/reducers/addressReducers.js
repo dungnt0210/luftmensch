@@ -30,6 +30,7 @@ import { SET_PROVINCES,
         case SET_DEFAULT_ADDRESS:
             return {
                 ...state,
+            currentList:  state.currentList.filter(address => address._id !== action.payload._id),
             defaultAddress: action.payload
             };
         case UPDATE_ADDRESS:
@@ -39,10 +40,9 @@ import { SET_PROVINCES,
             currentList: [action.payload, ...currentList]
             };
         case DELETE_ADDRESS:
-            currentList = state.currentList.filter(address => address._id !== action.payload)
             return {
                 ...state,
-            currentList: [...currentList]
+            currentList: state.currentList.filter(address => address._id !== action.payload)
             };
         case SET_DISTRICTS:
         return {
