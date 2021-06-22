@@ -110,7 +110,7 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
               Save
             </Button>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
+              Cancel
             </Popconfirm>
           </span>
         ) : (

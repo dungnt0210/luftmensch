@@ -17,7 +17,32 @@ const Order = {
    coupon: {
       type: ObjectId,
       ref: 'Coupon'
- },
+   },
+   discount: {
+      type: ObjectId,
+      ref: 'Discount'
+   },
+   payment: {
+      type: ObjectId,
+      ref: 'Payment'
+   },
+   shipping: {
+      method: {
+      type: ObjectId,
+      ref: 'Shipping'
+   },
+   fee: {
+      type: Number
+   },
+   contact: {
+      email: String,
+      name: String,
+      telephone: String,
+      detail: String,
+      commnune: String,
+      
+   }
+},
 };
 
 const OrderSchema = new Schema(Order, {timestamps: true});

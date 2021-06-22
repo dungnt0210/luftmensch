@@ -23,7 +23,7 @@ const CategoryPage = ({
      }, [listProductByCategory, match]);
     const handleClickWishlist = (e, productId) => {
         e.preventDefault();
-        let key = wishlist.findIndex(item => item._id == productId);
+        let key = wishlist.findIndex(item => item._id === productId);
         if (key === -1) {
           addToWishlist(productId, wishlist, isAuthenticated, history);
           message.success('This product is added to your wishlist');
@@ -35,7 +35,7 @@ const CategoryPage = ({
     <div className="site-card-wrapper">
     <Row gutter={[24, 24]}>
       {list.map(item => 
-        (<Col span={8}>
+        (<Col span={8} key={item._id}>
           <Link to={`/product/${item._id}`}>
             <Card bordered={false} 
             hoverable 

@@ -9,6 +9,7 @@ const initialState = {
    wishlistOpened: false,
    searchOpened: false
 };
+// eslint-disable-next-line import/no-anonymous-default-export
 export default function(state = initialState, action) {
     switch (action.type) {
        case TOGGLE_CART:
@@ -19,7 +20,7 @@ export default function(state = initialState, action) {
           };
         case TOGGLE_WISHLIST:
         return {
-            wishlistOpened: false,
+            cartOpened: false,
             searchOpened: false,
             wishlistOpened: !state.wishlistOpened
         };

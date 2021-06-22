@@ -76,6 +76,35 @@ export const getProfile = () => dispatch => {
       });
 };
 
+export const updatePassword = (data) => dispatch => {
+   dispatch(toggleCustomerLoading());
+   axios
+      .patch("/api/customer/change-password", data)
+      .then(res => {
+         dispatch(toggleCustomerLoading());
+      })
+      .catch(err => {
+        console.log(err);
+         dispatch(toggleCustomerLoading());
+      });
+};
+
+export const updateProfile = (data) => dispatch => {
+   dispatch(toggleCustomerLoading());
+   axios
+      .patch("/api/customer/update-profile", data)
+      .then(res => {
+         if (res.status === 200) {
+            dispatch(setCurrentCustomer(res.data.customer));
+         }
+         dispatch(toggleCustomerLoading());
+      })
+      .catch(err => {
+        console.log(err);
+         dispatch(toggleCustomerLoading());
+      });
+};
+
 export const setCurrentCustomer = data => {
    return {
       type: SET_CURRENT_CUSTOMER,
@@ -162,9 +191,9 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
       });
    } else {
       let key = cart.findIndex(item => 
-         item.productId._id == product.productId._id && 
-         item.options.size == product.options.size && 
-         item.options.color == product.options.color );
+         item.productId._id === product.productId._id && 
+         item.options.size === product.options.size && 
+         item.options.color === product.options.color );
       if (key === -1) {
          cart.unshift(product);
       } else {
@@ -174,6 +203,7 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
          type: SET_CART,
          payload: cart
       });
+      localStorage.setItem("cart", JSON.stringify(cart));
       dispatch(setTotal(cart));
       dispatch(toggleCustomerLoading());
    }
@@ -201,6 +231,36 @@ export const removeFromCart = (cart, isAuthenticated, index) => dispatch => {
          type: SET_CART,
          payload: cart
       });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      dispatch(setTotal(cart));
+      dispatch(toggleCustomerLoading());
+   }
+};
+
+export const updateCartItem = (cart, isAuthenticated, index, qty) => dispatch => {
+   dispatch(toggleCustomerLoading());
+   if (isAuthenticated) {
+      axios
+      .patch("/api/customer/update-cart", {itemId: cart[index]._id, qty: qty})
+      .then(res => {
+         dispatch({
+            type: SET_CART,
+            payload: res.data.reverse()
+         });
+         dispatch(setTotal(cart));
+      })
+      .catch(err => {
+         console.log(err);
+         dispatch(toggleCustomerLoading());
+      });
+   } else {
+      cart[index].options.qty = qty;
+      dispatch({
+         type: SET_CART,
+         payload: cart
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      console.log( JSON.stringify(cart));
       dispatch(setTotal(cart));
       dispatch(toggleCustomerLoading());
    }
@@ -274,13 +334,22 @@ export const getCart = () => dispatch => {
    .then(res => {
       dispatch({ 
          type: SET_CART,
-         payload: res.data
+         payload: res.data.reverse()
       });
       dispatch(toggleCustomerLoading());
    })
    .catch(err => {
       dispatch(toggleCustomerLoading());
       });
+};
+
+export const getCartLocal = () => dispatch => {
+   dispatch(toggleCustomerLoading());
+   dispatch({ 
+      type: SET_CART,
+      payload: JSON.parse(localStorage.cart)
+   });
+   dispatch(toggleCustomerLoading());
 };
 
 export const logoutCustomer = () => dispatch => {

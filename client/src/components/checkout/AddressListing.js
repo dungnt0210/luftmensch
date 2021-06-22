@@ -1,22 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { List, Card, Row, Col, Divider, Button, Typography } from 'antd';
+import { List, Card, Row, Col, Divider, Button, Typography, Radio } from 'antd';
 import { connect } from 'react-redux';
 
-import { EditOutlined, PlusOutlined , CheckOutlined, DeleteOutlined } from '@ant-design/icons';
-import Address from "./Address";
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import Address from "../customer/Address";
 import { setDefaultAddress } from '../../actions/addressAction';
 
-const Addresses = ({defaultAddress, addressList, handleDelete, setDefaultAddress}) => {
+const AddressListing = ({defaultAddress, addressList, setDefaultAddress}) => {
      const [isEditing, setIsEditing] = useState(false);
      const [checkedAddress, setCheckedAddress] = useState({isEmpty: true});
      const [hasAddress, setHasAddress] = useState(false);
+     const [fullAddresses, setFullAdressses] = useState([defaultAddress]);
+     const [chooseAddress, setChooseAddress] = useState(defaultAddress._id);
      useEffect( () => {
-      if (typeof defaultAddress === 'undefined') {
+      if (!defaultAddress) {
         setHasAddress(false);
       } else {
         setHasAddress(true);
       }
-     }, [defaultAddress])
+     }, [defaultAddress]);
+     
+     useEffect( () => {
+       if (addressList) {
+          setFullAdressses([defaultAddress,...addressList]);
+       }
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+     }, [defaultAddress, addressList]);
      const onCancel = () => {
        setIsEditing(false);
      }
@@ -31,10 +40,9 @@ const Addresses = ({defaultAddress, addressList, handleDelete, setDefaultAddress
       setIsEditing(true);
       setCheckedAddress({isEmpty: false, ...item});
     }
-    const handleSetDefault = (newId) => {
-      setDefaultAddress(newId, defaultAddress);
+    const handlePickAddress = (e) => {
+      setChooseAddress(e.target.value)
     }
-
     return (
         <>
         <Row gutter={16}>
@@ -50,50 +58,34 @@ const Addresses = ({defaultAddress, addressList, handleDelete, setDefaultAddress
               />
         </Row>
         <Divider />
-        {
-          hasAddress ?
-          ( <>        
-            <Row gutter={16}>
-              <Col span={12}>
-              <Card title="Default address" className="default-address" extra={[<Button onClick={e => editAddress(defaultAddress)} icon={<EditOutlined />}  key="edit-address" >Edit</Button>]}>
-              <p>Phone number: {defaultAddress.telephone}</p>
-              {defaultAddress.detail}, {defaultAddress.commune.label}, {defaultAddress.district.label}, {defaultAddress.province.label}
-              </Card>
-              </Col>
-            </Row>
-            <Divider />
             <Row>
-                {
-                  addressList ?
-                  (<Typography.Title level={3}>More addresses</Typography.Title>) : null}
                 <Col span={24}>
+                <Radio.Group onChange={handlePickAddress} value={chooseAddress}>
                     <List
                     grid={{
                     gutter: 16,
                     column: 2
                     }}
-                    dataSource={addressList}
+                    dataSource={fullAddresses}
                     renderItem={item => (
                     <List.Item>
                         <Card title={item.telephone} actions={
                           [
-                            <Button icon={<CheckOutlined />} type="primary" onClick={e => handleSetDefault(item._id)} key={`set-default-address-${item.index}`}>Set as default</Button>,
                             <Button icon={<EditOutlined />} onClick={e => editAddress(item)} key={`edit-address-${item.index}`} >Edit</Button>,
-                            <Button icon={<DeleteOutlined />} onClick={e => handleDelete(item._id)} type="danger" key={`delete-address-${item.index}`}>Remove</Button>,
                           ]
-                        }>
+                        }
+                        extra={[<Radio value={item._id}/>]}
+                        >
                         {item.detail}, {item.commune.label}, {item.district.label}, {item.province.label}
                         </Card>
                     </List.Item>
                     )}
                 />
+                </Radio.Group>
                 </Col>
             </Row>
-            </>
-        ) : <Typography.Title level={3}>You don't have any addresses</Typography.Title>
-        }
         </>
     );
 }
 
-export default connect(null, {setDefaultAddress})(Addresses);
+export default connect(null, {setDefaultAddress})(AddressListing);

@@ -18,7 +18,6 @@ const ProductSlider = ({data}) => {
             showFullscreenButton={false}
             showPlayButton={false}
         /> : null}
-        {    console.log(images)}
     </div>
    );
 };

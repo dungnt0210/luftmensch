@@ -135,6 +135,23 @@ async (req, res) => {
    ;
 });
 
+router.patch("/update-cart",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   Customer.findOneAndUpdate(
+      { _id: req.user._id,
+         cart: { $elemMatch: { _id: req.body.itemId}}
+      },
+      { $set: { 'cart.$.options.qty' : req.body.qty } },
+      { new: true }
+      )
+   .populate('cart.productId', 'name price images')
+   .then(doc => res.json(doc.cart))
+   .catch(err => res.status(400).json({error: err}));
+   ;
+});
+
+
 router.post("/login", (req, res) => {
     Customer.findOne({ email: req.body.email }).then(customer => {
        if (!customer) {
@@ -173,6 +190,77 @@ router.patch("/update/:id",
        .catch(err =>
           res.status(400).json({ update: "Error updating existing user" })
        );
+ }
+);
+
+router.patch("/update-profile",
+passport.authenticate('customer-permission', { session: false }),
+ (req, res) => {
+   Customer.findOne({ _id: req.user._id }).then(customer => {
+      if (!customer) {
+         return res.status(404).json({ message: "Customer not found" });
+      }
+      
+      if (req.body.changeEmail) {
+         bcrypt.compare(req.body.password, customer.password).then(isMatch => {
+            if (isMatch) {
+                  customer.email = req.body.email;
+                  customer.name = req.body.name;
+                  customer.save()
+                  .then(doc => res.json({
+                     message: "Your profile is saved",
+                     customer: doc
+                  }));
+            } else {
+               res.status(400).json({ message: "Password Incorrect" });
+            }
+            }
+         );
+      } else {
+         customer.name = req.body.name;
+         customer.save()
+         .then(doc => res.json({
+            message: "Your profile is saved",
+            customer: doc
+         }));
+      }
+   });
+ }
+);
+
+
+router.patch("/change-password",
+passport.authenticate('customer-permission', { session: false }),
+ (req, res) => {
+   Customer.findOne({ _id: req.user._id }).then(customer => {
+      if (!customer) {
+         return res.status(404).json({ message: "Customer not found" });
+      }
+
+      bcrypt.compare(req.body.password, customer.password).then(isMatch => {
+         if (isMatch) {
+            customer.password = req.body.newPassword;
+            customer.email = req.body.email;
+            customer.name = req.body.name;
+            bcrypt.genSalt(10, (err, salt) => {
+               bcrypt.hash(customer.password, salt, (err, hash) => {
+                  customer.password = hash;
+                  customer
+                     .save()
+                     .then(doc => res.json({
+                        message: "Your profile is saved",
+                        customer: doc
+                     }))
+                     .catch(err =>
+                        console.log({ error: err })
+                     );
+               });
+            });
+         } else {
+            return res.status(400).json({ message: "Password Incorrect" });
+         }
+      });
+   });
  }
 );
 

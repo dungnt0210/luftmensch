@@ -42,7 +42,7 @@ const ListAdmin = ({ listAdmin, deleteAdmin, updateAdmin, list, loading, isAuthe
    useEffect(() => {
      console.log(isAuthenticated);
     listAdmin();
-    }, [listAdmin]);
+    }, [listAdmin, isAuthenticated]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   
@@ -122,7 +122,7 @@ const ListAdmin = ({ listAdmin, deleteAdmin, updateAdmin, list, loading, isAuthe
               Save
             </Button>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
+              Cancel
             </Popconfirm>
           </span>
         ) : (

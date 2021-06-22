@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import { Link, withRouter } from "react-router-dom";
 import { Menu } from 'antd';
 import './header.scss';
@@ -34,7 +34,7 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
         <div className="container">
         <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal" className="menu">
             <Menu.Item key="home" className="header-logo">
-            <Link to={`/`}><img src={`/luftmensch.svg`} /></Link>
+            <Link to={`/`}><img alt="logo" src={`/luftmensch.svg`} /></Link>
             </Menu.Item>
             {list.map(item => 
                 (<Menu.SubMenu key={item._id} title={item.name} className="cate-item" 

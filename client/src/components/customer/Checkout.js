@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { loginCustomer } from '../../actions/customerAction';
-import { Row, Col, Typography, Form, Input, Button, Radio, Select} from 'antd';
-import {LockOutlined} from '@ant-design/icons';
+import { Row, Col, Typography, Form, Input, Radio, Select} from 'antd';
 import './login.scss';
 
 const layout = {
@@ -12,10 +11,6 @@ const layout = {
 const tailLayout = {
 wrapperCol: { span: 14 },
 };  
- 
-const buttonLayout = {
-  wrapperCol: { offset: 6, span: 12 },
-}; 
 
 const Checkout = ({ isAuthenticated, loginCustomer, history }) => {
    const provinceSource = [
@@ -23,7 +18,7 @@ const Checkout = ({ isAuthenticated, loginCustomer, history }) => {
    ]
     return (
       <div>
-         <Row className="form-container">
+         <Row >
             <Col span={24} >
             <Typography.Title level={3}>Contact Information</Typography.Title>
             <Form {... layout} className="checkout-form">

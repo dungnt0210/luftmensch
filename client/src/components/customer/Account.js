@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-// import { getProfile } from '../../actions/customerAction';
+import { updateProfile, updatePassword } from '../../actions/customerAction';
 import { Row, Col, Form, Input, Button, Divider, Checkbox} from 'antd';
 
-const Account = ({ logData, history }) => {
+const Account = ({ logData, loading, updateProfile, updatePassword }) => {
 
     const [changeEmail, setChangeEmail] = useState(false);
     const [changePassword, setChangePassword] = useState(false);
@@ -21,8 +21,11 @@ const Account = ({ logData, history }) => {
    };
    
     const handleSubmit = (values) => {
-        console.log(logData);
-      console.log(values);
+        if (changePassword) {
+            updatePassword(values);
+        } else {
+            updateProfile({changeEmail: changeEmail, ...values})
+        }
    };
    
     const hanldeChangeEmail = (e) => {
@@ -62,7 +65,7 @@ const Account = ({ logData, history }) => {
                 <Checkbox onChange={hanldeChangePassword}>Change password</Checkbox>
             </Form.Item>
             <Form.Item className="customer-save">
-                <Button type="primary" htmlType="submit" size="large">
+                <Button type="primary" htmlType="submit" size="large" disabled={loading}>
                 Save
                 </Button>
             </Form.Item>
@@ -77,7 +80,7 @@ const Account = ({ logData, history }) => {
                 ]}>
                 <Input.Password />
             </Form.Item>
-            <Form.Item label="New password" name="new-password" hidden={!(changePassword)}
+            <Form.Item label="New password" name="newPassword" hidden={!(changePassword)}
              rules={[
                 {
                     required: (changePassword),
@@ -90,7 +93,7 @@ const Account = ({ logData, history }) => {
                 name="confirm"
                 hidden={!changePassword}
                 label="Confirm Password"
-                dependencies={['new-password']}
+                dependencies={['newPassword']}
                 hasFeedback
                 rules={[
                 {
@@ -99,7 +102,7 @@ const Account = ({ logData, history }) => {
                 },
                 ({ getFieldValue }) => ({
                     validator(_, value) {
-                    if (!value || !changePassword || getFieldValue('new-password') === value) {
+                    if (!value || !changePassword || getFieldValue('newPassword') === value) {
                         return Promise.resolve();
                     }
                     return Promise.reject(new Error('The two passwords that you entered do not match!'));
@@ -116,4 +119,4 @@ const Account = ({ logData, history }) => {
     );
  };
  
- export default connect(null, {})(Account);
+ export default connect(null, {updateProfile, updatePassword})(Account);

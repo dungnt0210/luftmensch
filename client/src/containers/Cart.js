@@ -1,20 +1,23 @@
-import React , {useEffect, useState} from "react";
+import React , {useEffect} from "react";
 import { connect } from 'react-redux';
 import  { Link } from 'react-router-dom';
 import { Col , Button, Typography, Image, Divider, Row, InputNumber } from 'antd';
 import {
     DeleteOutlined
   } from '@ant-design/icons';
-import { getCart, removeFromCart } from '../actions/customerAction';
-const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart}) => {
+import { getCart, removeFromCart, updateCartItem } from '../actions/customerAction';
+const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart, updateCartItem}) => {
     useEffect( () => {
         if(isAuthenticated) {
             getCart();
         }
-    },[isAuthenticated, getCart, removeFromCart]);
+    },[isAuthenticated, getCart]);
     const handleRemove = (e, index) => {
         e.preventDefault();
         removeFromCart(cart, isAuthenticated, index);
+    }
+    const handleQty = (qty, index) => {
+        updateCartItem(cart, isAuthenticated, index, qty);
     }
    return (
     <>
@@ -35,7 +38,7 @@ const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart}) 
                             <Typography.Paragraph>${item.productId.price}</Typography.Paragraph>
                             <Typography.Paragraph>Color: {item.options.color}</Typography.Paragraph>
                             <Typography.Paragraph>Size: {item.options.size}</Typography.Paragraph>
-                            <Typography.Paragraph>Qty: <InputNumber value={item.options.qty}/></Typography.Paragraph>
+                            <Typography.Paragraph>Qty: <InputNumber min={1} onChange={qty => handleQty(qty, index)} value={item.options.qty}/></Typography.Paragraph>
                             <Button type="danger" onClick={e => handleRemove(e, index)} icon={<DeleteOutlined/>}>Remove</Button>
                         </Col>
                     </Row>
@@ -62,6 +65,6 @@ const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart}) 
   });
    export default connect(
     mapStateToProps,
-    {getCart, removeFromCart}
+    {getCart, removeFromCart, updateCartItem}
   )(Cart);
    

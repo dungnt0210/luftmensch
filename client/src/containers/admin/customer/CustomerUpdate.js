@@ -3,7 +3,7 @@ import { Table, Input, Skeleton , Popconfirm, Form, Typography, Button } from 'a
 import CustomerForm from "../../../components/admin/customer/CustomerForm";
 import { connect } from "react-redux";
 import { updateAddress, deleteAddress, createAddress } from "../../../actions/addressAction";
-import { updateCustomer, getCustomerById } from "../../../actions/customerAction";
+import { getCustomerById } from "../../../actions/customerAction";
 
 const EditableCell = ({
     editing,
@@ -52,8 +52,7 @@ const CustomerUpdate = ({
   const customerId = match.params.id;
   useEffect(() => {
       getCustomerById(customerId);
-      console.log(customerId);
-   }, [match, getCustomerById]);
+   }, [match, getCustomerById, customerId]);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   
@@ -142,7 +141,7 @@ const CustomerUpdate = ({
               Save
             </Button>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
+              Cancel
             </Popconfirm>
           </span>
         ) : (

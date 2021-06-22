@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import { connect } from 'react-redux';
 import PropTypes from "prop-types";
 import {addToWishlist, addToCart} from '../../actions/customerAction';
@@ -23,7 +23,7 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
       setColor(e.target.value);
     }
     const onClickWishlist = e => {
-      if (wishlist.findIndex(item => item._id == data._id) === -1) {
+      if (wishlist.findIndex(item => item._id === data._id) === -1) {
         addToWishlist(data._id, wishlist, isAuthenticated, history);
       } else {
         message.warning("Product is already added to your wishlist");

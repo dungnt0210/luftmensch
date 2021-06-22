@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import jwt_decode from "jwt-decode";
 import store from "./store";
 import { BrowserRouter, Route, Switch, Redirect, Link } from "react-router-dom";
@@ -7,11 +7,8 @@ import HomePage from './containers/HomePage';
 import CategoryPage from './containers/CategoryPage';
 import ProductPage from './containers/ProductPage';
 import CheckoutPage from './containers/CheckoutPage';
-
 import Header from './components/Header';
 import Login from './components/customer/Login';
-import Address from './components/customer/Address';
-
 import CustomerPage from './containers/customer/CustomerPage';
 
 import Footer from './components/Footer';
@@ -24,7 +21,7 @@ import { Drawer, Layout, Button } from 'antd';
 import Cart from './containers/Cart';
 import Wishlist from './containers/Wishlist';
 
-if (localStorage.customerToken) {
+if (typeof localStorage.customerToken !== "undefined") {
     const token = localStorage.customerToken;
     customerToken(token);
     const decoded = jwt_decode(token);
@@ -32,7 +29,7 @@ if (localStorage.customerToken) {
     const currentTime = Date.now() / 1000;
     if (decoded.exp < currentTime) {
         store.dispatch(logoutCustomer());
-        window.location.href = "./loginPage";
+        window.location.href = "./customer/login";
     }
 }
 
@@ -49,6 +46,7 @@ const Main = ({
     useEffect( () => {
         getCategories();
      }, [getCategories]);
+     
     return (
         <BrowserRouter>
             <Layout>
@@ -101,7 +99,6 @@ const Main = ({
             </Drawer>
             <Drawer
                 title="Search"
-                placement="right"
                 closable={false}
                 onClose={toggleSearch}
                 visible={global.searchOpened}

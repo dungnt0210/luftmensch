@@ -3,11 +3,10 @@ import { connect } from 'react-redux';
 import { Tabs } from 'antd';
 import { getProfile } from '../../actions/customerAction';
 import Account from "../../components/customer/Account";
-import Address from "../../components/customer/Address";
 import Addresses from "../../components/customer/Addresses";
 import { deleteAddress } from '../../actions/addressAction';
 import "./customer.scss"
-const CustomerPage = ({isAuthenticated, logData, loading, defaultAddress, addressList, getProfile, deleteAddress}) => {
+const CustomerPage = ({ logData, loading, defaultAddress, addressList, getProfile, deleteAddress}) => {
     const { TabPane } = Tabs;
     useEffect( () => {
       getProfile();
@@ -19,13 +18,13 @@ const CustomerPage = ({isAuthenticated, logData, loading, defaultAddress, addres
         <div className="customer-content">
               <Tabs tabPosition="left">
               <TabPane tab="My Account" key="customer-account">
-                <Account logData={logData} getProfile={getProfile}/>
+                <Account logData={logData} loading={loading}/>
               </TabPane>
               <TabPane tab="My Addresses" key="customer-addresses">
                 <Addresses defaultAddress={defaultAddress} addressList={addressList} handleDelete={handleDelete}/>
               </TabPane>
               <TabPane tab="My Orders" key="customer-orders">
-                <Address />
+              Content of Tab 3
               </TabPane>
               <TabPane tab="My Saved Items" key="customer-wishlist">
                 Content of Tab 4
@@ -38,7 +37,6 @@ const CustomerPage = ({isAuthenticated, logData, loading, defaultAddress, addres
     );
  };
  const mapStateToProps = state => ({
-    isAuthenticated: state.customer.isAuthenticated,
     logData: state.customer.logData,
     defaultAddress: state.addressData.defaultAddress,
     addressList: state.addressData.currentList,

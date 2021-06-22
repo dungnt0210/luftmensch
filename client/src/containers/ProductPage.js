@@ -4,9 +4,8 @@ import {withRouter} from 'react-router-dom';
 import {getProductById} from '../actions/productAction';
 import ProductSlider from '../components/product/ProductSlider';
 import ProductInfo from '../components/product/ProductInfo';
-import PropTypes from "prop-types";
 
-import { Card, Col, Row, Typography } from 'antd';
+import { Col, Row } from 'antd';
 
 const ProductPage = ({getProductById, match, history, loading}) => {
     useEffect(() => {
@@ -24,10 +23,6 @@ const ProductPage = ({getProductById, match, history, loading}) => {
     </Row>
   </div>
    );
-};
-
-ProductPage.propTypes = {
- data: PropTypes.object.isRequired
 };
 
 export default withRouter(connect(
