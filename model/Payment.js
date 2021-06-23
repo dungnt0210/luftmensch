@@ -9,10 +9,9 @@ const Payment = {
       type: String,
       required: true
    },
-   fee: {
-      type: Number,
-      required: true
-   }
+   logo: {
+      type: String,
+   },
 };
 
 const PaymentSchema = new Schema(Payment, {timestamps: true});

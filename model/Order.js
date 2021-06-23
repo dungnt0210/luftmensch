@@ -18,10 +18,6 @@ const Order = {
       type: ObjectId,
       ref: 'Coupon'
    },
-   discount: {
-      type: ObjectId,
-      ref: 'Discount'
-   },
    payment: {
       type: ObjectId,
       ref: 'Payment'
@@ -31,18 +27,21 @@ const Order = {
       type: ObjectId,
       ref: 'Shipping'
    },
-   fee: {
-      type: Number
+      fee: {
+         type: Number
+      }
    },
    contact: {
       email: String,
       name: String,
       telephone: String,
       detail: String,
-      commnune: String,
-      
+      commnune: String,      
+   },
+   status: {
+      value: String,
+      label: String
    }
-},
 };
 
 const OrderSchema = new Schema(Order, {timestamps: true});
