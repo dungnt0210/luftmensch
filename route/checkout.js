@@ -10,7 +10,7 @@ router.post("/guest", (req, res) => {
       newOrder
          .save()
          .then(doc => res.json(doc))
-         .catch(err => res.json(err));
+         .catch(err => res.status(400).json({message: "Cannot place order"}));
    }
 );
 

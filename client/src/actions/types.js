@@ -46,3 +46,9 @@ export const TOGGLE_SEARCH = "TOGGLE_SEARCH";
 export const SET_CART  = "SET_CART";
 export const SET_WISHLIST  = "SET_WISHLIST";
 export const SET_TOTAL = "SET_TOTAL";
+
+export const GET_SHIPPING = "GET_SHIPPING";
+export const GET_PAYMENT = "GET_PAYMENT";
+export const TOGGLE_CHECKOUT_LOADING = "TOGGLE_CHECKOUT_LOADING";
+
+
