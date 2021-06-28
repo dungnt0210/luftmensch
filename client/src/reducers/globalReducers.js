@@ -1,13 +1,15 @@
 import { 
    TOGGLE_CART,
    TOGGLE_WISHLIST,
-   TOGGLE_SEARCH
+   TOGGLE_SEARCH,
+   SET_ERROR
 } from '../actions/types';
 
 const initialState = {
    cartOpened: false,
    wishlistOpened: false,
-   searchOpened: false
+   searchOpened: false,
+   errorMessage: ""
 };
 // eslint-disable-next-line import/no-anonymous-default-export
 export default function(state = initialState, action) {
@@ -23,6 +25,11 @@ export default function(state = initialState, action) {
             cartOpened: false,
             searchOpened: false,
             wishlistOpened: !state.wishlistOpened
+        };
+        case SET_ERROR:
+        return {
+            ...state,
+            errorMessage: action.payload
         };
         case TOGGLE_SEARCH:
         return {

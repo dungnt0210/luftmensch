@@ -4,7 +4,7 @@
   "description": "luftmensch shop project",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon --ignore client/ server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "dungnt0210",

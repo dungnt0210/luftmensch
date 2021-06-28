@@ -1,17 +1,30 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import { connect } from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import { Result, Row, Col } from 'antd';
+import { Result, Row, Col, Button } from 'antd';
 import Cart from '../containers/Cart'; 
-import GuestCheckout from "../components/checkout/GuestCheckout";
-import CustomerCheckout from "../components/checkout/CustomerCheckout";
+import AddressListing from "../components/checkout/AddressListing";
+import AddressForm from "../components/checkout/AddressForm";
 import Payment from "../components/checkout/Payment";
 import Shipping from "../components/checkout/Shipping";
 import "./checkout.scss";
 import { getProfile, getCart, getCartLocal } from "../actions/customerAction";
 import { getPayment, getShipping } from "../actions/checkoutAction";
 
-const CheckoutPage = ({isAuthenticated, cart, getCartLocal, getCart, getProfile, getShipping, getPayment}) => {
+const CheckoutPage = ({
+    isAuthenticated, 
+    cart, 
+    data,
+    defaultAddress, 
+    addressList, 
+    shippingMethods, 
+    paymentMethods, 
+    getCartLocal, 
+    getCart, 
+    getProfile, 
+    getShipping,
+    getPayment
+    }) => {
     
     useEffect( () => {
         if (!isAuthenticated) {
@@ -28,7 +41,19 @@ const CheckoutPage = ({isAuthenticated, cart, getCartLocal, getCart, getProfile,
         getPayment();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    const checkoutAddress = useRef();
+    const emptyData = { email: "", name: ""};
+    let addressComponent;
     
+    if (isAuthenticated) {
+        if (defaultAddress) {
+            addressComponent =  <AddressListing defaultAddress={defaultAddress} addressList={addressList} />
+        } else {
+            addressComponent =  <AddressForm ref={checkoutAddress} data={data} />
+        }
+    } else {
+        addressComponent =  <AddressForm ref={checkoutAddress} data={emptyData} />
+    }
     const [payment, setPayment] = useState("");
     const [shipping, setShipping] =useState("")
     const handleChangePayment  = e => {
@@ -37,7 +62,9 @@ const CheckoutPage = ({isAuthenticated, cart, getCartLocal, getCart, getProfile,
     const handleChangeShipping  = e => {
         setShipping(e.target.value);
     }
-
+    const sendOrder = (e) => {
+        checkoutAddress.current.confirmAddress();
+    }
     if(typeof cart === "undefined" || cart.length === 0) {
         return (
             <Result
@@ -50,15 +77,13 @@ const CheckoutPage = ({isAuthenticated, cart, getCartLocal, getCart, getProfile,
         <>
             <Row gutter={24}>
                 <Col span={14}>
-                    {isAuthenticated ? 
-                        (<CustomerCheckout />) :
-                        (<GuestCheckout />)
-                    }
-                    <Shipping shipping={shipping} handleChangeShipping={handleChangeShipping}/>
-                    <Payment payment={payment} handleChangePayment={handleChangePayment}/>
+                    {addressComponent}
+                    <Shipping methods={paymentMethods} shipping={shipping} handleChangeShipping={handleChangeShipping}/>
+                    <Payment method={shippingMethods} payment={payment} handleChangePayment={handleChangePayment}/>
                 </Col>
                 <Col span={10} className="checkout-cart">
                     <Cart />
+                    <Button type="primary" size="large" onClick={sendOrder}>Place Order</Button>
                 </Col>
             </Row>
         </>
@@ -67,7 +92,12 @@ const CheckoutPage = ({isAuthenticated, cart, getCartLocal, getCart, getProfile,
 
 const mapStateToProps = state => ({
     cart: state.customer.cart,
-    isAuthenticated: state.customer.isAuthenticated
+    isAuthenticated: state.customer.isAuthenticated,
+    data: state.customer.logData,
+    defaultAddress: state.addressData.defaultAddress,
+    addressList: state.addressData.currentList,
+    paymentMethods: state.checkout.payments,
+    shippingMethods: state.checkout.shipping
 });
 export default withRouter(connect(
     mapStateToProps,

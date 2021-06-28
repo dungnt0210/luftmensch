@@ -38,7 +38,7 @@ const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart, u
                             <Typography.Paragraph>${item.productId.price}</Typography.Paragraph>
                             <Typography.Paragraph>Color: {item.options.color}</Typography.Paragraph>
                             <Typography.Paragraph>Size: {item.options.size}</Typography.Paragraph>
-                            <Typography.Paragraph>Qty: <InputNumber min={1} onChange={qty => handleQty(qty, index)} value={item.options.qty}/></Typography.Paragraph>
+                            <Typography.Paragraph>Qty: <InputNumber min={1} max={item.options.maxQty} onChange={qty => handleQty(qty, index)} value={item.options.qty}/></Typography.Paragraph>
                             <Button type="danger" onClick={e => handleRemove(e, index)} icon={<DeleteOutlined/>}>Remove</Button>
                         </Col>
                     </Row>

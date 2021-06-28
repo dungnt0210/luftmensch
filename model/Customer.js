@@ -21,8 +21,9 @@ const Customer = {
    birthday: {
       type: Date
    },
-   cart: [{ productId: {type: ObjectId, ref: 'Product' }, options: { qty: Number, size: String, color: String }}],
+   cart: [{ productId: {type: ObjectId, ref: 'Product' }, options: { qty: Number, size: String, color: String, maxQty: Number }}],
    wishlist: [{type: ObjectId, ref: 'Product' }],
+   reviews: [{type: ObjectId, ref: 'Review' }],
    orders: [{type: ObjectId, ref: 'Order' }],
 };
 

@@ -11,7 +11,8 @@ import { SET_CURRENT_CUSTOMER,
    SET_WISHLIST,
    SET_TOTAL,
    SET_CURRENT_LIST_ADDRESS,
-   SET_DEFAULT_ADDRESS
+   SET_DEFAULT_ADDRESS,
+   SET_ERROR
 } from "./types";
 
 export const registerCustomer = (data, history) => dispatch => {
@@ -175,38 +176,51 @@ export const updateCustomer = (id, data) => dispatch => {
 
 export const addToCart = (product, cart, isAuthenticated) => dispatch => {
    dispatch(toggleCustomerLoading());
-   if (isAuthenticated) {
-      axios
-      .patch("/api/customer/add-to-cart", product)
-      .then(res => {
+   let key = cart.findIndex(item => 
+      item.productId._id === product.productId._id && 
+      item.options.size === product.options.size && 
+      item.options.color === product.options.color );
+      let tempQty = 0;
+      if (key !== -1) {
+         tempQty = cart[key].options.qty + parseFloat(product.options.qty);
+         if (tempQty > product.options.maxQty) {
+            dispatch({
+               type: SET_ERROR,
+               payload: "Your qty is more than available"
+            });
+            console.log("err qty");
+      }
+   } else {
+      if (isAuthenticated) {
+         axios
+         .patch("/api/customer/add-to-cart", product)
+         .then(res => {
+            dispatch({
+               type: SET_CART,
+               payload: res.data.reverse()
+            });
+            dispatch(setTotal(cart));
+         })
+         .catch(err => {
+           console.log(err);
+            dispatch(toggleCustomerLoading());
+         });
+      } else {
+         if (key === -1) {
+            cart.unshift(product);
+         } else {
+            cart[key].options.qty = tempQty;
+         }
          dispatch({
             type: SET_CART,
-            payload: res.data.reverse()
+            payload: cart
          });
+         localStorage.setItem("cart", JSON.stringify(cart));
          dispatch(setTotal(cart));
-      })
-      .catch(err => {
-        console.log(err);
          dispatch(toggleCustomerLoading());
-      });
-   } else {
-      let key = cart.findIndex(item => 
-         item.productId._id === product.productId._id && 
-         item.options.size === product.options.size && 
-         item.options.color === product.options.color );
-      if (key === -1) {
-         cart.unshift(product);
-      } else {
-         cart[key].options.qty = cart[key].options.qty + parseFloat(product.options.qty);
       }
-      dispatch({
-         type: SET_CART,
-         payload: cart
-      });
-      localStorage.setItem("cart", JSON.stringify(cart));
-      dispatch(setTotal(cart));
-      dispatch(toggleCustomerLoading());
    }
+
 };
 
 export const removeFromCart = (cart, isAuthenticated, index) => dispatch => {

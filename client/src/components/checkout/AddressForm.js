@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, forwardRef, useImperativeHandle } from "react";
 import { connect } from "react-redux";
 import { getCommunes, getDistricts, getProvinces } from '../../actions/addressAction';
 import { Form, Input, Select} from 'antd';
 
-const AddressForm = ({ 
+const AddressForm = forwardRef(({ 
     isAuthenticated,
     communes, 
     districts, 
@@ -12,7 +12,7 @@ const AddressForm = ({
     getDistricts,
     getProvinces,
     data
-  }) => {
+  }, ref) => {
    useEffect(() => {
      getProvinces();
    }, [getProvinces]);
@@ -33,7 +33,19 @@ const AddressForm = ({
     getCommunes(form.getFieldValue('province').value, value.value);
     form.resetFields(['commune']);
  };
+  useImperativeHandle(ref, () => ({
+    confirmAddress() {
+      form
+          .validateFields()
+          .then((values) => {
+            console.log(values);
+          })
+          .catch((info) => {
+            console.log('Validate Failed:', info);
+          });
+    }
   
+  }));
     return (
          <Form
          form={form}
@@ -123,7 +135,7 @@ const AddressForm = ({
         </Form.Item>
       </Form>
     );
- };
+ });
  const mapStateToProps = state => ({
    isAuthenticated: state.customer.isAuthenticated,
    communes: state.addressData.communes,
@@ -131,4 +143,4 @@ const AddressForm = ({
    provinces: state.addressData.provinces
  });
  
- export default connect(mapStateToProps, {getCommunes, getDistricts, getProvinces})(AddressForm);
+ export default connect(mapStateToProps, {getCommunes, getDistricts, getProvinces}, null , {forwardRef: true})(AddressForm);

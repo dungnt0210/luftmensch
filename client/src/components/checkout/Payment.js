@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Typography, Radio, Space, Empty, Image } from 'antd';
+import { Typography, Radio, Space, Empty } from 'antd';
 
 const Payment = ({methods, payment, handleChangePayment}) => {
 

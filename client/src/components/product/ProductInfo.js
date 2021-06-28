@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { connect } from 'react-redux';
 import PropTypes from "prop-types";
 import {addToWishlist, addToCart} from '../../actions/customerAction';
-import { Radio , Button, Typography, Collapse, message } from 'antd';
+import { Radio , Button, Typography, Collapse, message, InputNumber } from 'antd';
 import {
     HeartOutlined,
     ShoppingOutlined
@@ -11,16 +11,41 @@ import './info.scss';
 const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart, addToWishlist, history}) => {
     const [size, setSize] = useState('');
     const [color, setColor] = useState('');
+    const [maxQty, setMaxQty] = useState(0);
+    const [qty, setQty] = useState(1);
+    const [sizes, setSizes] = useState([
+      {label: 'XS', value: 'XS', disabled: false, count: 10},
+      {label: 'S', value: 'S', disabled: false, count: 10},
+      {label: 'M', value: 'M', disabled: false, count: 10},
+      {label: 'L', value: 'L', disabled: false, count: 10},
+      {label: 'XL', value: 'XL', disabled: false, count: 10},
+      {label: 'XXL', value: 'XXL', disabled: false, count: 10}
+  ]);
 
     const onSizeChange = e => {
       if (color) {
         setSize(e.target.value);
+        let sizeKey = sizes.findIndex(item => item.value === e.target.value);
+        setMaxQty(sizes[sizeKey].count);
+        setQty(1);
       } else {
         message.error("Please pick your favorite color first");
       }
     }
     const onColorChange = e => {
       setColor(e.target.value);
+      setQty(1);
+      if (data) {
+        let colorKey = data.options.findIndex(item => item.color.name === e.target.value);
+        let newSizes = data.options[colorKey].color.sizes.map(item => ({label: item.size, value: item.size, disabled: item.count === 0, count:item.count}));
+        setSizes(newSizes);
+        if (size) {
+          let sizeKey = sizes.findIndex(item => item.value === size);
+          if (sizes[sizeKey].disabled) {
+            setSize('');
+          }
+        }
+      }
     }
     const onClickWishlist = e => {
       if (wishlist.findIndex(item => item._id === data._id) === -1) {
@@ -28,6 +53,9 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
       } else {
         message.warning("Product is already added to your wishlist");
       }
+    }
+    const handleQtyChange = value => {
+      setQty(value)
     }
     const onClickCart = e => {
       if (size && color) {
@@ -39,8 +67,9 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
             },
           options: {
             size: size,
-            qty: 1,
-            color: color
+            qty: qty,
+            color: color,
+            maxQty: maxQty
           }
         }
         addToCart(product, cart, isAuthenticated);
@@ -55,20 +84,14 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
           label: item.color.name
         }}
     ) : [];
-    const [sizes, setSizes] = useState([
-        {label: 'XS', value: 'XS', disabled: false},
-        {label: 'S', value: 'S', disabled: false},
-        {label: 'M', value: 'M', disabled: false},
-        {label: 'L', value: 'L', disabled: false},
-        {label: 'XL', value: 'XL', disabled: false},
-        {label: 'XXL', value: 'XXL', disabled: false}
-    ]);
   
    return (
     <div className="product-info">
         <Typography.Title level={4}>{data.name}</Typography.Title>
         <Typography.Paragraph>${data.finalPrice ? data.finalPrice: data.price}</Typography.Paragraph>
+        <Typography.Paragraph>Color: {color}</Typography.Paragraph>
         <Typography.Paragraph>Size: {size}</Typography.Paragraph>
+        <Typography.Paragraph>Qty: <InputNumber value={qty} disabled={!maxQty} max={maxQty} min={1} onChange={handleQtyChange}/></Typography.Paragraph>
         <Radio.Group
           onChange={onColorChange}
           value={color}

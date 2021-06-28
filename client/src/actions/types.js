@@ -1,4 +1,5 @@
 export const SET_ERRORS = "SET_ERRORS";
+export const SET_ERROR = "SET_ERROR";
 
 // customer options
 export const TOGGLE_CUSTOMER_LOADING = "TOGGLE_CUSTOMER_LOADING";
