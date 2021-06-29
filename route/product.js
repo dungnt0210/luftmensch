@@ -3,7 +3,7 @@ const router = express.Router();
 const Product = require("../model/Product");
 const multer = require("multer");
 const fs = require("fs");
-
+const productController = require("../controller/productController");
 var tempDir = 'client/public/product-img/temp';
 var tempDirName = tempDir + '/';
 var imgFront = 'img-front';
@@ -30,16 +30,6 @@ var storage = multer.diskStorage({
    {name: imgRight, maxCount: 1}
 ]);
 
-function caculateQty(data) {
-   let qty = 0;
-   data.forEach(item => {
-      item.color.sizes.forEach(childItem => {
-         qty+= parseInt(childItem.count)
-      })
-   })
-   return qty;
-}
-
  router.post("/upload/",
    (req, res) => {
       upload(req, res, err => {
@@ -63,7 +53,7 @@ function caculateQty(data) {
  });
 router.post("/create", (req, res) => {
       if (req.body.options) {
-         req.body.qty = caculateQty(req.body.options);
+         req.body.qty = productController.caculateQty(req.body.options);
       }
       const newProduct = new Product(req.body);
       newProduct
@@ -116,7 +106,7 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/update/:id", (req, res) => {
       if (req.body.options) {
-         req.body.qty = caculateQty(req.body.options);
+         req.body.qty = productController.caculateQty(req.body.options);
       }
       Product.findOneAndUpdate(
          { _id: req.params.id },

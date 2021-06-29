@@ -14,6 +14,15 @@ router.post("/guest", (req, res) => {
    }
 );
 
+router.post("/guest", (req, res) => {
+   const newOrder = new Order(req.body);
+   newOrder
+      .save()
+      .then(doc => res.json(doc))
+      .catch(err => res.status(400).json({message: "Cannot place order"}));
+}
+);
+
 router.get("/shipping", (req, res) => {
       Shipping.find()
          .then(docs => res.status(200).json(docs))
