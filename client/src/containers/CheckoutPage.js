@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
 import { connect } from 'react-redux';
-import {withRouter} from 'react-router-dom';
 import { Result, Row, Col, Button } from 'antd';
 import Cart from '../containers/Cart'; 
 import AddressListing from "../components/checkout/AddressListing";
@@ -15,6 +14,7 @@ const CheckoutPage = ({
     isAuthenticated, 
     cart, 
     data,
+    total,
     defaultAddress, 
     addressList, 
     shippingMethods, 
@@ -47,7 +47,7 @@ const CheckoutPage = ({
     
     if (isAuthenticated) {
         if (defaultAddress) {
-            addressComponent =  <AddressListing defaultAddress={defaultAddress} addressList={addressList} />
+            addressComponent =  <AddressListing logData={data} ref={checkoutAddress} defaultAddress={defaultAddress} addressList={addressList} />
         } else {
             addressComponent =  <AddressForm ref={checkoutAddress} data={data} />
         }
@@ -55,7 +55,8 @@ const CheckoutPage = ({
         addressComponent =  <AddressForm ref={checkoutAddress} data={emptyData} />
     }
     const [payment, setPayment] = useState("");
-    const [shipping, setShipping] =useState("")
+    const [shipping, setShipping] =useState("");
+
     const handleChangePayment  = e => {
         setPayment(e.target.value);
     }
@@ -63,7 +64,9 @@ const CheckoutPage = ({
         setShipping(e.target.value);
     }
     const sendOrder = (e) => {
-        checkoutAddress.current.confirmAddress();
+        let shippingItem = shippingMethods.find(item => item.value === shipping);
+        let paymentItem = paymentMethods.find(item => item.value === payment);
+        checkoutAddress.current.confirmAddress(shippingItem, paymentItem, isAuthenticated, cart, total);
     }
     if(typeof cart === "undefined" || cart.length === 0) {
         return (
@@ -94,13 +97,14 @@ const mapStateToProps = state => ({
     cart: state.customer.cart,
     isAuthenticated: state.customer.isAuthenticated,
     data: state.customer.logData,
+    total: state.customer.total,
     defaultAddress: state.addressData.defaultAddress,
     addressList: state.addressData.currentList,
     paymentMethods: state.checkout.payments,
     shippingMethods: state.checkout.shipping
 });
-export default withRouter(connect(
+export default connect(
     mapStateToProps,
     {getCartLocal, getCart, getProfile, getPayment, getShipping}
-)(CheckoutPage));
+)(CheckoutPage);
    
