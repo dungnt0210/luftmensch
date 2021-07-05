@@ -46,7 +46,7 @@ async (req, res) => {
    await Customer.findOne({ _id: req.user._id })
       .then(doc => cart = doc.cart);
    let key = cart.findIndex(item => 
-      item.productId == req.body.productId && 
+      item.productId == req.body.productId._id && 
       item.options.size == req.body.options.size && 
       item.options.color == req.body.options.color );
    if (key === -1) {

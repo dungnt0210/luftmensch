@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import { connect } from 'react-redux';
 import { Result, Row, Col, Button } from 'antd';
-import Cart from '../containers/Cart'; 
+import ProductList from "../components/checkout/ProductList";
 import AddressListing from "../components/checkout/AddressListing";
 import AddressForm from "../components/checkout/AddressForm";
 import Payment from "../components/checkout/Payment";
@@ -85,7 +85,7 @@ const CheckoutPage = ({
                     <Payment method={shippingMethods} payment={payment} handleChangePayment={handleChangePayment}/>
                 </Col>
                 <Col span={10} className="checkout-cart">
-                    <Cart />
+                    <ProductList cart={cart} total={total} isAuthenticated={isAuthenticated}/>
                     <Button type="primary" size="large" onClick={sendOrder}>Place Order</Button>
                 </Col>
             </Row>
@@ -105,6 +105,8 @@ const mapStateToProps = state => ({
 });
 export default connect(
     mapStateToProps,
-    {getCartLocal, getCart, getProfile, getPayment, getShipping}
+    {getCartLocal, getCart, getProfile, getPayment, getShipping},
+    null,
+    {}
 )(CheckoutPage);
    

@@ -1,6 +1,10 @@
 import React, { useEffect, forwardRef, useImperativeHandle } from "react";
 import { connect } from "react-redux";
 import { getCommunes, getDistricts, getProvinces } from '../../actions/addressAction';
+import { guestCheckout, checkout } from '../../actions/checkoutAction';
+import { useHistory } from "react-router-dom";
+
+import { createAddress } from "../../actions/addressAction";
 import { Form, Input, Select} from 'antd';
 
 const AddressForm = forwardRef(({ 
@@ -11,6 +15,9 @@ const AddressForm = forwardRef(({
     getCommunes, 
     getDistricts,
     getProvinces,
+    createAddress,
+    checkout,
+    guestCheckout,
     data
   }, ref) => {
    useEffect(() => {
@@ -18,6 +25,7 @@ const AddressForm = forwardRef(({
    }, [getProvinces]);
    
    const [form] = Form.useForm();
+   const history = useHistory();
    useEffect(() => {
        if(isAuthenticated) {
         form.setFieldsValue({email: data.email, name: data.name});
@@ -34,15 +42,30 @@ const AddressForm = forwardRef(({
     form.resetFields(['commune']);
  };
   useImperativeHandle(ref, () => ({
-    confirmAddress() {
+    confirmAddress(shipping, payment, isAuthenticated, cart, total) {
       form
-          .validateFields()
-          .then((values) => {
-            console.log(values);
-          })
-          .catch((info) => {
-            console.log('Validate Failed:', info);
-          });
+        .validateFields()
+        .then((values) => {
+          let order = {
+            total: total,
+            products: cart.map(item => ({product: item.productId._id, options: item.options})),
+            shipping: {
+              method: shipping._id,
+              fee: shipping.fee
+            },
+            payment: payment._id,
+            contact: values,
+            createAddress: true
+          }
+          if (isAuthenticated) {
+            checkout(order, history);
+          } else {
+            guestCheckout(order, history);
+          }
+        })
+        .catch((info) => {
+          console.log('Validate Failed:', info);
+        });
     }
   
   }));
@@ -61,7 +84,9 @@ const AddressForm = forwardRef(({
               message: 'Please input your email',
             },
           ]}
-        ><Input /> </Form.Item>
+        >
+          <Input />
+        </Form.Item>
         <Form.Item
           name="name"
           label="Full name"
@@ -72,7 +97,9 @@ const AddressForm = forwardRef(({
               message: 'Please input your name',
             },
           ]}
-        ><Input /> </Form.Item>
+        >
+          <Input />
+        </Form.Item>
         <Form.Item
           name="telephone"
           label="Phone number"
@@ -143,4 +170,4 @@ const AddressForm = forwardRef(({
    provinces: state.addressData.provinces
  });
  
- export default connect(mapStateToProps, {getCommunes, getDistricts, getProvinces}, null , {forwardRef: true})(AddressForm);
+ export default connect(mapStateToProps, {getCommunes, getDistricts, getProvinces, checkout, guestCheckout, createAddress}, null , {forwardRef: true})(AddressForm);

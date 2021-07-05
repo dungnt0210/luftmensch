@@ -11,7 +11,8 @@ const Product = {
      required: true
    },
    finalPrice: {
-    type: Number
+    type: Number,
+    require: true
    },
    active: {
     type: Boolean,
@@ -26,7 +27,9 @@ const Product = {
     default: false
    },
    qty: {
-    type: Number
+    type: Number,
+    require: true,
+    min: 0
    },
    description: {
       type: String
@@ -39,7 +42,7 @@ const Product = {
    options: [
       { color: { name: String,
           hexCode: String,
-          sizes: [ {size: String, count: Number} ]
+          sizes: [ {size: String, count: {type: Number, min: 0 }} ]
       }
     }
    ],
@@ -62,8 +65,7 @@ const Product = {
    category: {
       type: ObjectId,
       ref: 'Category'
-   },
-   review: [{type: ObjectId, ref: 'Review'}]
+   }
 };
 
 const ProductSchema = new Schema(Product, {timestamps: true});

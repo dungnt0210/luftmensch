@@ -10,7 +10,10 @@ import {
 import './info.scss';
 const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart, addToWishlist, history}) => {
     const [size, setSize] = useState('');
+    const [sizeIndex, setSizeIndex] = useState(-1);
     const [color, setColor] = useState('');
+    const [colorIndex, setColorIndex] = useState(-1);
+
     const [maxQty, setMaxQty] = useState(0);
     const [qty, setQty] = useState(1);
     const [sizes, setSizes] = useState([
@@ -26,6 +29,7 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
       if (color) {
         setSize(e.target.value);
         let sizeKey = sizes.findIndex(item => item.value === e.target.value);
+        setSizeIndex(sizeKey);
         setMaxQty(sizes[sizeKey].count);
         setQty(1);
       } else {
@@ -33,10 +37,11 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
       }
     }
     const onColorChange = e => {
+      let colorKey = data.options.findIndex(item => item.color.name === e.target.value);
+      setColorIndex(colorKey);
       setColor(e.target.value);
       setQty(1);
       if (data) {
-        let colorKey = data.options.findIndex(item => item.color.name === e.target.value);
         let newSizes = data.options[colorKey].color.sizes.map(item => ({label: item.size, value: item.size, disabled: item.count === 0, count:item.count}));
         setSizes(newSizes);
         if (size) {
@@ -58,6 +63,8 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
       setQty(value)
     }
     const onClickCart = e => {
+      e.stopPropagation();
+      e.preventDefault();
       if (size && color) {
         let product = {
           productId: {
@@ -69,7 +76,10 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
             size: size,
             qty: qty,
             color: color,
-            maxQty: maxQty
+            maxQty: maxQty,
+            sizeIndex: sizeIndex,
+            colorIndex: colorIndex,
+            price: data.finalPrice
           }
         }
         addToCart(product, cart, isAuthenticated);

@@ -5,6 +5,7 @@ const app = express();
 const passport = require("passport");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// require('mongoose').set('debug', true);
 
 // db configuration
 const MONGO_URI = process.env.MONGO_URI;

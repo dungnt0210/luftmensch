@@ -1,19 +1,12 @@
-import React , {useEffect} from "react";
+import React from "react";
 import { connect } from 'react-redux';
 import  { Link } from 'react-router-dom';
 import { Col , Button, Typography, Image, Divider, Row, InputNumber } from 'antd';
 import {
     DeleteOutlined
   } from '@ant-design/icons';
-import { getCart, removeFromCart, updateCartItem, getCartLocal } from '../actions/customerAction';
-const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart, updateCartItem, getCartLocal}) => {
-    useEffect( () => {
-        if(isAuthenticated) {
-            getCart();
-        } else {
-            getCartLocal();
-        }
-    },[isAuthenticated, getCart, getCartLocal]);
+import { removeFromCart, updateCartItem } from '../../actions/customerAction';
+const ProductList = ({cart, total, isAuthenticated, removeFromCart, updateCartItem}) => {
     const handleRemove = (e, index) => {
         e.preventDefault();
         removeFromCart(cart, isAuthenticated, index);
@@ -60,13 +53,8 @@ const Cart = ({cart, total, loading, isAuthenticated, getCart, removeFromCart, u
         </>
    );
 };
-   const mapStateToProps = state => ({
-    loading: state.customer.customerLoading,
-    cart: state.customer.cart,
-    total: state.customer.total
-  });
    export default connect(
-    mapStateToProps,
-    {getCart, removeFromCart, updateCartItem, getCartLocal}
-  )(Cart);
+    null,
+    {removeFromCart, updateCartItem}
+  )(ProductList);
    

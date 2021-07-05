@@ -181,15 +181,15 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
       item.options.size === product.options.size && 
       item.options.color === product.options.color );
       let tempQty = 0;
-      if (key !== -1) {
-         tempQty = cart[key].options.qty + parseFloat(product.options.qty);
-         if (tempQty > product.options.maxQty) {
-            dispatch({
-               type: SET_ERROR,
-               payload: "Your qty is more than available"
-            });
-            console.log("err qty");
-      }
+   if (key !== -1) {
+      tempQty = cart[key].options.qty + parseFloat(product.options.qty);
+   }
+   if (tempQty > product.options.maxQty) {
+      dispatch({
+         type: SET_ERROR,
+         payload: "Your qty is more than available"
+      });
+      console.log("err qty");
    } else {
       if (isAuthenticated) {
          axios
@@ -202,7 +202,7 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
             dispatch(setTotal(cart));
          })
          .catch(err => {
-           console.log(err);
+            console.log(err);
             dispatch(toggleCustomerLoading());
          });
       } else {
@@ -220,7 +220,6 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
          dispatch(toggleCustomerLoading());
       }
    }
-
 };
 
 export const removeFromCart = (cart, isAuthenticated, index) => dispatch => {
@@ -274,7 +273,6 @@ export const updateCartItem = (cart, isAuthenticated, index, qty) => dispatch =>
          payload: cart
       });
       localStorage.setItem("cart", JSON.stringify(cart));
-      console.log( JSON.stringify(cart));
       dispatch(setTotal(cart));
       dispatch(toggleCustomerLoading());
    }

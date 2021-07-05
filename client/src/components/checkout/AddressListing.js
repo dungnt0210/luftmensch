@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { List, Card, Row, Col, Divider, Button, Typography, Radio } from 'antd';
+import React, { useEffect, forwardRef, useState, useImperativeHandle } from "react";
+
+import { List, Card, Row, Col, Divider, Button, Radio } from 'antd';
 import { connect } from 'react-redux';
-
+import { checkout } from '../../actions/checkoutAction';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { useHistory } from "react-router-dom";
 import Address from "../customer/Address";
-import { setDefaultAddress } from '../../actions/addressAction';
 
-const AddressListing = ({defaultAddress, addressList, setDefaultAddress}) => {
+const AddressListing = forwardRef(({defaultAddress, addressList, logData, checkout}, ref) => {
      const [isEditing, setIsEditing] = useState(false);
+     const history = useHistory();
      const [checkedAddress, setCheckedAddress] = useState({isEmpty: true});
      const [hasAddress, setHasAddress] = useState(false);
      const [fullAddresses, setFullAdressses] = useState([defaultAddress]);
@@ -43,6 +45,23 @@ const AddressListing = ({defaultAddress, addressList, setDefaultAddress}) => {
     const handlePickAddress = (e) => {
       setChooseAddress(e.target.value)
     }
+    useImperativeHandle(ref, () => ({
+      confirmAddress(shipping, payment, isAuthenticated, cart, total) {
+        let contactAddress =  fullAddresses.find(item => item._id === chooseAddress)
+        let order = {
+          total: total,
+          products: cart.map(item => ({product: item.productId._id, options: item.options})),
+          shipping: {
+            method: shipping._id,
+            fee: shipping.fee
+          },
+          payment: payment._id,
+          contact: {email: logData.email, name: logData.name, ...contactAddress},
+          createAddress: false
+        };
+        checkout(order, history);
+      }
+    }));
     return (
         <>
         <Row gutter={16}>
@@ -86,6 +105,5 @@ const AddressListing = ({defaultAddress, addressList, setDefaultAddress}) => {
             </Row>
         </>
     );
-}
-
-export default connect(null, {setDefaultAddress})(AddressListing);
+});
+export default connect(null, {checkout}, null, {forwardRef: true})(AddressListing);

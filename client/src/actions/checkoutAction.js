@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { GET_PAYMENT, 
     GET_SHIPPING,
+    SET_CART,
+    SET_ERROR,
     TOGGLE_CHECKOUT_LOADING
 } from "./types";
 
@@ -37,6 +39,53 @@ export const getPayment = () => dispatch => {
        });
  };
  
+ export const guestCheckout = (data, history) => dispatch => {
+   dispatch(toogleCheckoutLoading());
+   axios
+      .post(`/api/checkout/guest`, data)
+      .then(res => {
+         if (res.error) {
+            dispatch({
+               type: SET_ERROR,
+               payload: res.data.message
+            });
+         } else {
+            dispatch({
+               type: SET_CART,
+               payload: []
+            });
+            history.push("/");
+         }
+         dispatch(toogleCheckoutLoading());
+      })
+      .catch(err => {
+         dispatch(toogleCheckoutLoading());
+      });
+};
+
+export const checkout = (data, history) => dispatch => {
+   dispatch(toogleCheckoutLoading());
+   axios
+      .post(`/api/checkout`, data)
+      .then(res => {
+         if (res.error) {
+            dispatch({
+               type: SET_ERROR,
+               payload: res.data.message
+            });
+         } else {
+            dispatch({
+               type: SET_CART,
+               payload: []
+            });
+            history.push("/");
+         }
+         dispatch(toogleCheckoutLoading());
+      })
+      .catch(err => {
+         dispatch(toogleCheckoutLoading());
+      });
+};
 
 export const toogleCheckoutLoading = () => {
    return {

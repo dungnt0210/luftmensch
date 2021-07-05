@@ -4,22 +4,38 @@ const Order = require("../model/Order");
 const Payment = require("../model/Payment");
 const Shipping = require("../model/Shipping");
 
+const checkoutController = require("../controller/checkoutController");
+const passport = require("passport");
 
-router.post("/guest", (req, res) => {
+router.post("/guest", async (req, res) => {
+   let validate = await checkoutController.validateQty(req.body.products);
+   if (validate) {
+      await checkoutController.guestExecute(req.body.products);
       const newOrder = new Order(req.body);
       newOrder
-         .save()
-         .then(doc => res.json(doc))
-         .catch(err => res.status(400).json({message: "Cannot place order"}));
+      .save()
+      .then(doc => {
+         res.status(200).json({error: false, contact: doc.contact, _id: doc._id});
+      })
+      .catch(err => res.json(err));
+   } else {
+      res.status(400).json({error: true, 
+         message: "One of your products in your cart was changed. Please check and update your cart"});
    }
+}
 );
 
-router.post("/guest", (req, res) => {
-   const newOrder = new Order(req.body);
-   newOrder
-      .save()
-      .then(doc => res.json(doc))
-      .catch(err => res.status(400).json({message: "Cannot place order"}));
+router.post("/",
+passport.authenticate('customer-permission', { session: false }),
+async (req, res) => {
+   let validate = await checkoutController.validateQty(req.body.products);
+   if (validate) {
+      await checkoutController.customerExecute(req.body.products, req.user._id, req.body);
+      res.status(200).json({error: false, contact: req.body.contact});
+   } else {
+      res.status(400).json({error: true, 
+         message: "One of your products in your cart was changed. Please check and update your cart"});
+   }
 }
 );
 
@@ -36,32 +52,4 @@ router.get("/payment", (req, res) => {
        .catch(err => res.status(400).json({message: "Cannot get any payment methods."}));
  }
 );
-router.get("/:id", (req, res) => {
-   Order.findOne({ _id: req.params.id })
-      .then(doc => res.status(200).json(doc))
-      .catch(err => res.status(400).json(err));
-});
-
-router.patch("/update/:id", (req, res) => {
-      Order.findOneAndUpdate(
-         { _id: req.params.id },
-         { $set: req.body },
-         { new: true }
-      )
-         .then(doc => res.status(200).json(doc))
-         .catch(err =>
-            res.status(400).json({ update: "Error updating existing post" })
-         );
-   }
-);
-
-router.delete("/delete/:id", (req, res) => {
-      Order.findOneAndDelete({ _id: req.params.id })
-         .then(doc => res.status(200).json(doc))
-         .catch(err =>
-            res.status(400).json({ delete: "Error deleting a post" })
-         );
-   }
-);
-
 module.exports = router;

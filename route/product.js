@@ -68,15 +68,17 @@ router.post("/create", (req, res) => {
          .catch(err => res.json(err));
    }
 );
-router.post("/updatemany", (req, res) => {
+router.post("/updatemany", async (req, res) => {
    Product.find({})
       .then(docs => {
          docs.forEach(async doc => {
-            doc.images =[];
-            await doc.images.push('/product-img/' + doc._id + '/img-front.png');
-            await doc.images.push('/product-img/' + doc._id + '/img-behind.png');
-            await doc.images.push('/product-img/' + doc._id + '/img-right.png');
-            await doc.images.push('/product-img/' + doc._id + '/img-left.png');
+            let qty = 0;
+            // await doc.options.forEach(item => {
+            //    item.color.sizes.forEach(childItem =>
+            //       qty+=childItem.count
+            //       )
+            // })
+            doc.options[1].color.sizes[1].size="S";
             doc.save();
          }).then( () => res.json(200))
       })

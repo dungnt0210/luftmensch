@@ -8,8 +8,14 @@ const Order = {
    },
    products: [{
       product: {type: ObjectId, ref: 'Product'},
-      qty: {type:Number}
-      }],
+      options: {
+         qty: {type:Number},
+         price: {type: Number},
+         color: String,
+         size: String
+         }
+      }
+   ],
    customer: {
       type: ObjectId,
       ref: 'Customer'
@@ -36,7 +42,18 @@ const Order = {
       name: String,
       telephone: String,
       detail: String,
-      commnune: String,      
+      commune: {
+         value: String,
+         label: String
+      },
+      district: {
+         value: String,
+         label: String
+      },
+      province: {
+         value: String,
+         label: String
+      },  
    },
    status: {
       value: String,

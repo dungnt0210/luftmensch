@@ -5,7 +5,6 @@ const { ObjectId } = Schema.Types;
 const Review = {
    rate: {
       type: Number,
-      required: true
    },
    reviewd: {
       type: Boolean,
@@ -14,7 +13,7 @@ const Review = {
    images: [String],
    replies: [{
     createdAt: { type: Date, default: Date.now },
-    content: {type: String, required: true},
+    content: {type: String},
     admin:{
       type: ObjectId,
       ref: 'Adminer'
@@ -26,10 +25,6 @@ const Review = {
    product:{
       type: ObjectId,
       ref: 'Product'
-   },
-   customer:{
-      type: ObjectId,
-      ref: 'Customer'
    }
 };
 
