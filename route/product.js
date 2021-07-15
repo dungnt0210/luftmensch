@@ -92,6 +92,14 @@ router.get("/", (req, res) => {
    }
 );
 
+router.get("/" , (req, res) => {
+   Product.find()
+      .then(docs => res.status(200).json(docs))
+      .catch(err => res.status(400).json(err));
+}
+);
+
+
 router.get("/category/:cateId", (req, res) => {
    Product
       .find({category: req.params.cateId})
@@ -99,6 +107,8 @@ router.get("/category/:cateId", (req, res) => {
       .catch(err => res.status(400).json(err));
 }
 );
+
+router.get("/search", productController.search);
 
 router.get("/:id", async (req, res) => {
    await Product.findOne({ _id: req.params.id })

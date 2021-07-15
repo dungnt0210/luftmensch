@@ -1,62 +1,65 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { connect } from 'react-redux';
 import {listProductByCategory} from '../actions/productAction';
-import {addToWishlist} from '../actions/customerAction';
-
-import { Card, Col, Row, Button, Typography, message } from 'antd';
-import { Link} from 'react-router-dom';
-import {
-    HeartTwoTone
-  } from '@ant-design/icons';
-
+import ProductList from "../components/product/ProductList";
+import { Col, Row } from "antd";
+import Filter from "../components/product/Filter";
+import { sizes, colors } from "../utils/constants";
 const CategoryPage = ({
   listProductByCategory, 
-  addToWishlist,
-  wishlist,
   list, 
   match,
-  history,
   isAuthenticated,
   loading}) => {
     useEffect(() => {
         listProductByCategory(match.params.id);
      }, [listProductByCategory, match]);
-    const handleClickWishlist = (e, productId) => {
-        e.preventDefault();
-        let key = wishlist.findIndex(item => item._id === productId);
-        if (key === -1) {
-          addToWishlist(productId, wishlist, isAuthenticated, history);
-          message.success('This product is added to your wishlist');
-        } else {
-          message.warn('This product is already added to your wishlist');
-        }
+    const [filterColors, setFilterColors] = useState(colors);
+    const [listing, setListing] = useState(list);
+    const filterListing = (lsColor, size, min, max) => {
+      listing.filter(item => {
+        
+      })
     }
+    const toggleFilterColor = (index, checked) => {
+        let nextColors = [...filterColors];
+        nextColors[index].checked = !checked;
+        setFilterColors(nextColors);
+    }
+    const [chosenSize, setChosenSize] = useState("");
+    const handleFilterSize = e => {
+       setChosenSize(e.target.value);
+    }
+    const handleFilterPrice = value => {
+      console.log(value);
+   }
+   const handleCloseSize = () =>{
+    setChosenSize("");
+   }
    return (
+
     <div className="site-card-wrapper">
-    <Row gutter={[24, 24]}>
-      {list.map(item => 
-        (<Col span={8} key={item._id}>
-          <Link to={`/product/${item._id}`}>
-            <Card bordered={false} 
-            hoverable 
-            cover={<img alt="product" src={item.images[0]}/>}>
-                <Typography.Title level={5}>{item.name}</Typography.Title>
-                <br/>
-                <Typography.Text>${item.finalPrice ? item.finalPrice : item.price}</Typography.Text>
-                <Button onClick={e => handleClickWishlist(e, item._id)}
-                className="product-wishlist"
-                icon={<HeartTwoTone twoToneColor="#ffffff"/>} />
-            </Card>
-            </Link>
-        </Col>)
-      )}
+    <Row gutter={24}>
+      <Col span={6}>
+          <Filter 
+          toggleFilterColor={toggleFilterColor} 
+          filterColors={filterColors}
+          filterSizes={sizes}
+          chosenSize={chosenSize}
+          hanldeFilterPrice={handleFilterPrice}
+          handleFilterSize={handleFilterSize}
+          handleCloseSize={handleCloseSize}
+          />
+        </Col>
+      <Col span={18}>
+        <ProductList listing={list} isAuthenticated={isAuthenticated} />
+      </Col>
     </Row>
   </div>
    );
 };
 
 const mapStateToProps = state => ({
-  wishlist: state.customer.wishlist,
   list: state.product.list,
   isAuthenticated: state.customer.isAuthenticated,
   loading: state.product.productLoading || state.product.productsLoading
@@ -64,6 +67,6 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  {listProductByCategory, addToWishlist}
+  {listProductByCategory}
 )(CategoryPage);
   

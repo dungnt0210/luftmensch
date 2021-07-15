@@ -1,0 +1,23 @@
+.filter-block {
+    .ant-collapse-item {
+        .ant-collapse-header {
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 0.4em;
+            color: maroon;
+            svg {
+                width: 16px;
+                height: 16px;
+            }
+    
+            .filter-header {
+                svg {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        }
+    }
+
+}
