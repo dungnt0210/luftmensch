@@ -1,0 +1,29 @@
+.card-tabs-container {
+    p {
+        margin: 0;
+    }
+    > .ant-tabs-card  {
+        .ant-tabs-content {
+            margin-top: -16px;
+            > .ant-tabs-tabpane {
+                padding: 16px;
+                background: #fff;
+            }
+        }
+        > .ant-tabs-nav::before {
+            display: none;
+        }
+    }
+    padding: 20px;
+    border: 1px solid;
+    .ant-tabs-card {
+        > .ant-tabs-nav {
+            .ant-tabs-tab {
+                background: transparent;
+                &.ant-tabs-tab-active {
+                    background: white;
+                }
+            }
+        }
+    }
+}
