@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Typography, Radio, Space } from 'antd';
+import { Typography, Radio } from 'antd';
 
 const Shipping = ({methods, shipping, handleChangeShipping}) => {
 

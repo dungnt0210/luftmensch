@@ -1,9 +1,10 @@
-import React, {useEffect} from "react";
-import { List, Button, Slider, Collapse, Radio, Tag } from 'antd';
+import React from "react";
+import { List, Button, Slider, Collapse, Radio, Tag, Select } from 'antd';
 import {
     CheckOutlined,
     MinusOutlined,
-    FilterOutlined
+    ArrowDownOutlined,
+    ArrowUpOutlined,
   } from '@ant-design/icons';
 import "./filter.scss";
 const { Panel } = Collapse;
@@ -14,14 +15,31 @@ const Filter = ({
   handleFilterSize, 
   chosenSize, 
   hanldeFilterPrice,
-  handleCloseSize
+  handleCloseSize,
+  sortType,
+  toggleSortType,
+  direction,
+  toggleDirection
 }) => {
    return (
     <Collapse ghost expandIconPosition="right" className="filter-block">
-      {filterSizes.length ? 
+      <Panel header="Sort Order" key="sort">
+      <Select value={sortType} style={{ width: 120 }} onChange={toggleSortType}>
+        <Select.Option value="position">Position</Select.Option>
+        <Select.Option value="name">Product Name</Select.Option>
+        <Select.Option value="price">Price</Select.Option>
+      </Select>
+      <Button shape="circle" 
+            icon={direction ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+            onClick={e => toggleDirection(!direction)}
+            />
+      </Panel>
+
+      <Panel header="Filter" key="filter">
+          {filterSizes.length ? 
         (<List
         grid={{
-        gutter: 10
+          gutter: [10,10],
           }}
           dataSource={filterSizes}
           renderItem={(item, index) => (
@@ -40,7 +58,7 @@ const Filter = ({
       {filterColors.length ? 
         (<List
         grid={{
-        gutter: 10
+        gutter: [10,10]
           }}
           dataSource={filterColors}
           renderItem={(item, index) => (
@@ -56,6 +74,8 @@ const Filter = ({
           )}
         />) : null
       }
+          </Panel>
+
       <Panel header="Color" key="color-filter">
       <List
         grid={{

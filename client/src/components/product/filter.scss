@@ -17,6 +17,16 @@
                     height: 20px;
                 }
             }
+
+            .ant-tag {
+                svg {
+                    width: 10px;
+                    height: 10px;
+                }
+                &.ant-tag-hidden {
+                    display: none;
+                }
+            }
         }
     }
 
