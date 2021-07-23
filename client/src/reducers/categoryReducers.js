@@ -1,6 +1,7 @@
 import { GET_CHILD_CATES, 
     GET_CATEGORIES,
-    TOGGLE_CATEGORY_LOADING
+    TOGGLE_CATEGORY_LOADING,
+    UPDATE_CATEGORY,
  } from '../actions/types';
  
  const initialState = {
@@ -16,6 +17,15 @@ import { GET_CHILD_CATES,
              ...state,
              list: action.payload
           };
+       case UPDATE_CATEGORY:
+         const list = state.list.filter(
+            cate => cate._id !== cate.payload._id
+         );
+         return {
+            ...state,
+            data: action.payload,
+            list: [...list, action.payload]
+         };
        case GET_CHILD_CATES:
           return {
              ...state,

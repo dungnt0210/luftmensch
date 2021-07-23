@@ -8,7 +8,7 @@ const Payment = ({methods, payment, handleChangePayment}) => {
         <>
             <Typography level={4}>Payment Method</Typography>
             <Radio.Group value={payment} onChange={handleChangePayment}>
-                <Space direction="vertical">
+                <Space direction="horizontal">
                 {methods ?
                     methods.map(item => 
                         (<Radio.Button className="payment-button" value={item.value}><img alt={item.label} src={item.logo} /></Radio.Button>)

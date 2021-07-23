@@ -71,6 +71,7 @@ const CheckoutPage = ({
     if(typeof cart === "undefined" || cart.length === 0) {
         return (
             <Result
+                className="common-page"
                 status="warning"
                 title="Please add products to cart before checkout"
               />
@@ -78,8 +79,10 @@ const CheckoutPage = ({
     }
     return(
         <>
-            <Row gutter={24}>
-                <Col span={14}>
+            <Row justify="space-between"
+                className="common-page"
+            >
+                <Col span={13}>
                     {addressComponent}
                     <Shipping methods={paymentMethods} shipping={shipping} handleChangeShipping={handleChangeShipping}/>
                     <Payment method={shippingMethods} payment={payment} handleChangePayment={handleChangePayment}/>

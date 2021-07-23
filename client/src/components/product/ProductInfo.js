@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { connect } from 'react-redux';
 import PropTypes from "prop-types";
 import {addToWishlist, addToCart} from '../../actions/customerAction';
-import { Radio , Button, Typography, Collapse, message, InputNumber } from 'antd';
+import { Radio , Button, Typography, message, InputNumber, Space } from 'antd';
 import {
     HeartOutlined,
     ShoppingOutlined
@@ -100,8 +100,6 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
         <Typography.Title level={4}>{data.name}</Typography.Title>
         <Typography.Paragraph>${data.finalPrice ? data.finalPrice: data.price}</Typography.Paragraph>
         <Typography.Paragraph>Color: {color}</Typography.Paragraph>
-        <Typography.Paragraph>Size: {size}</Typography.Paragraph>
-        <Typography.Paragraph>Qty: <InputNumber value={qty} disabled={!maxQty} max={maxQty} min={1} onChange={handleQtyChange}/></Typography.Paragraph>
         <Radio.Group
           onChange={onColorChange}
           value={color}
@@ -111,6 +109,7 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
             className="color-picker" />)
           )}
         </Radio.Group>
+        <Typography.Paragraph>Size: {size}</Typography.Paragraph>
         <Radio.Group
           options={sizes}
           onChange={onSizeChange}
@@ -119,26 +118,23 @@ const ProductInfo = ({data, cart, wishlist, loading,  isAuthenticated, addToCart
           buttonStyle="solid"
           className="size-picker"
         />
+        <Typography.Paragraph style={{marginTop: '20px'}}>Qty: <InputNumber value={qty} disabled={!maxQty} max={maxQty} min={1} onChange={handleQtyChange}/></Typography.Paragraph>
+        
         <div className="product-action">
+        <Space> 
         <Button type="primary" size="large" onClick={onClickCart}>Add to cart <ShoppingOutlined/></Button>
         <Button type="primary" size="large" onClick={onClickWishlist}><HeartOutlined/></Button>
+        </Space>
         </div>
-        <Collapse>
-            <Collapse.Panel header="Description" key="description">
-            <p>{data.description}</p>
-            </Collapse.Panel>
-            <Collapse.Panel header="Details" key="details">
-            <p>Collar: {data.collar}</p>
-            <p>Vignette: {data.vignette? <span>yes</span> : <span>no</span>}</p>
-            <p>Brand: {data.brand}</p>
-            </Collapse.Panel>
-            <Collapse.Panel header="Material" key="material">
-             {data.material ? data.material.map(item =>
-                    (<p>{item.name}: {item.percent}%</p>)
-                 ) : null
-             }
-            </Collapse.Panel>
-        </Collapse>
+        <Space direction="vertical" style={{marginTop: '20px'}}>
+        <p>Collar: {data.collar}</p>
+        <p>Vignette: {data.vignette? <span>yes</span> : <span>no</span>}</p>
+          {data.material ? data.material.map(item =>
+                (<p>{item.name}: {item.percent}%</p>)
+              ) : null
+          }
+        </Space>
+
     </div>
    );
 };

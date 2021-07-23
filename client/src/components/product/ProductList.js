@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { connect } from 'react-redux';
 import {addToWishlist} from '../../actions/customerAction';
 
-const ProductList = ({listing, wishlist, isAuthenticated, addToWishlist}) => {
+const ProductList = ({listing, wishlist, isAuthenticated, addToWishlist, column}) => {
     const history = useHistory();
     const handleClickWishlist = (e, productId) => {
         e.preventDefault();
@@ -21,7 +21,7 @@ const ProductList = ({listing, wishlist, isAuthenticated, addToWishlist}) => {
         <List
         grid={{
         gutter: [24,24],
-        column: 3
+        column: column,
         }}
         dataSource={listing}
         renderItem={item => (

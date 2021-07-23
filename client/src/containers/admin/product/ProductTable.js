@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { listCustomers, updateCustomer } from "../../../actions/customerAction";
-import { Table, Input, Skeleton , Popconfirm, Form, Typography, Button } from 'antd';
-import { Link } from "react-router-dom";
+import { updateProduct, listProducts } from "../../../actions/productAction";
+import { Table, Input, Skeleton, Popconfirm, Form, Typography, Button, Divider } from 'antd';
+import { Link, useHistory } from "react-router-dom";
+import { PlusOutlined } from '@ant-design/icons';
+
 const EditableCell = ({
     editing,
     dataIndex,
@@ -38,17 +40,37 @@ const EditableCell = ({
     );
 };
 
-const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
+const ProductTable = ({ listProducts, updateProduct, list, loading}) => {
+  const newHistory = useHistory();
    useEffect(() => {
-    listCustomers();
-    }, [listCustomers]);
+    listProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+  const formatColors = (listColors) => {
+    return "test";
+      // return listColors.map(itemCl => itemCl.color.name).join();
+  }
   const [form] = Form.useForm();
+  const [lsProducts, setLsProducts] = useState([]);
+  useEffect(() => {
+    if(!loading && list) {
+      let nxProducts = list.map(productItem => ({...productItem, cateItem: productItem.category ? productItem.category.name : "", colorLs: formatColors(productItem.options)}))
+      setLsProducts(nxProducts)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [list]);
   const [editingKey, setEditingKey] = useState('');
   
+  useEffect(() => {
+    listProducts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   const isEditing = (record) => record._id === editingKey;
 
   const edit = (record) => {
     form.setFieldsValue({
+      name: '',
+      email: '',
       ...record,
     });
     setEditingKey(record._id);
@@ -60,8 +82,8 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   const save = async (id) => {
     try {
       const row = await form.validateFields();
-      await updateCustomer(id, row);
-      listCustomers();
+      await updateProduct(id, row);
+      listProducts();
       setEditingKey('');
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
@@ -69,27 +91,43 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   };
   const columns = [
     {
-      title: 'Full name',
+      title: 'Name',
       dataIndex: 'name',
-      width: '10%',
       editable: true,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      width: '15%',
+      title: 'Price',
+      dataIndex: 'price',
       editable: true,
     },
     {
-        title: 'Created At',
-        dataIndex: 'createdAt',
-        width: '15%',
+        title: 'Qty',
+        dataIndex: 'qty',
         editable: false,
+    },
+    {
+        title: 'Category',
+        dataIndex: 'cateItem',
+        editable: false,
+    },
+    {
+        title: 'Color',
+        dataIndex: 'colorLs',
+        editable: false,
+    },
+    {
+        title: 'Collar',
+        dataIndex: 'collar',
+        editable: true,
+    },
+    {
+        title: 'Style',
+        dataIndex: 'style',
+        editable: true,
     },
     {
         title: 'Updated At',
         dataIndex: 'updatedAt',
-        width: '15%',
         editable: false,
     },
     {
@@ -123,7 +161,7 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
                   </Button>
                 </Typography.Link>
                  <Typography.Link disabled={editingKey !== ''}>      
-                  <Link to={`/admin/dashboard/customer/update/${record._id}`}>Update</Link>
+                  <Link to={`/admin/product/update/${record._id}`}>Update</Link>
                 </Typography.Link>
             </span>
         );
@@ -147,8 +185,10 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
     };
   });
    return (
-    <Skeleton active loading={loading}>
+    <Skeleton active loading={loading || !lsProducts}>
       <Form form={form} component={false}>
+        <Button icon ={<PlusOutlined/>} type="primary" onClick={e => newHistory.push("/admin/product/create")}>Create new product</Button>
+        <Divider />
         <Table
           components={{
             body: {
@@ -156,7 +196,7 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
             },
           }}
           bordered
-          dataSource={list}
+          dataSource={lsProducts}
           columns={mergedColumns}
           rowClassName="editable-row"
           pagination={{
@@ -169,12 +209,12 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
 };
 
 const mapStateToProps = state => ({
-    list: state.customer.list,
-    loading: state.customer.customerLoading || state.adminer.customersLoading,
+    list: state.product.list,
+    loading: state.product.loading,
     isAuthenticated: state.adminer.isAuthenticated
 });
 
 export default connect(
     mapStateToProps,
-    { listCustomers, updateCustomer })
-(CustomerTable);
+    { updateProduct, listProducts })
+(ProductTable);

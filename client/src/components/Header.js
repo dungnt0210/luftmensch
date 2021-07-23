@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { Link, withRouter } from "react-router-dom";
 import { Menu } from 'antd';
 import './header.scss';
+
 import {
     ShoppingOutlined,
     SearchOutlined,
@@ -15,9 +16,22 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
         setCurrent(e.key);
       };
     const handleCustomerClick = (e) => {
-        if (e.key === 'logout') {
-            logoutCustomer();
-        }
+        switch (e.key) {
+            case 'login':
+                history.push("/customer/login");
+                break;
+            case 'signup':
+                history.push("/customer/signup");
+                break;
+            case 'account':
+                history.push("/customer/account");
+                break;
+            case 'logout':
+                logoutCustomer();
+                break;
+            default:
+                console.log("key fail");
+          }
     };
     const handleRightClick = (e) => {
         if (e.key === "search") toggleSearch();
@@ -27,9 +41,7 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
     const linkMainCate = ({key, domEvent}) => {
         history.push(`/main-cate/${key}`);
     }
-    const linkCustomer = ({key, domEvent}) => {
-        history.push(`/customer/account`);
-    }
+
     return (
         <div className="container">
         <Menu onClick={handleClick} selectedKeys={[current]} mode="horizontal" className="menu">
@@ -55,13 +67,14 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
             <Menu.Item key="search" icon={<SearchOutlined />}/>
             <Menu.Item key="wishlist" icon={<HeartOutlined />}/>
             {isAuthenticated ? 
-                (<Menu.SubMenu key="customer-popup" onClick={handleCustomerClick} onTitleClick={linkCustomer} icon={<UserOutlined />} >
-                    <Menu.Item key="customer-details">My Details</Menu.Item>
-                    <Menu.Item key="customer-orders" >My Orders</Menu.Item>
-                    <Menu.Item key="customer-addresses" >My Addresses</Menu.Item>
+                (<Menu.SubMenu key="customer-popup-after" onClick={handleCustomerClick} icon={<UserOutlined />} >
+                    <Menu.Item key="account">My Account</Menu.Item>
                     <Menu.Item key="logout" >Sign out</Menu.Item>
                 </Menu.SubMenu>) :
-                (<Menu.Item key="customer" icon={<UserOutlined />}><Link to="/customer/login"/></Menu.Item>)
+                (<Menu.SubMenu key="customer-popup-before" onClick={handleCustomerClick} icon={<UserOutlined />} >
+                    <Menu.Item key="login">Login</Menu.Item>
+                    <Menu.Item key="signup" >Signup</Menu.Item>
+                </Menu.SubMenu>)
             }
             <Menu.Item key="cart" icon={<ShoppingOutlined />}/>
         </Menu>
@@ -69,6 +82,5 @@ const Header = ({list , isAuthenticated, history, toggleCart, toggleSearch, togg
     );
  };
  
-
-  export default withRouter(Header);
+export default withRouter(Header);
   

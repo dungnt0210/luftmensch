@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { listCustomers, updateCustomer } from "../../../actions/customerAction";
-import { Table, Input, Skeleton , Popconfirm, Form, Typography, Button } from 'antd';
-import { Link } from "react-router-dom";
+import { Table, Input, Skeleton, message, Popconfirm, Form, Typography, Button } from 'antd';
+import { Link,useHistory } from "react-router-dom";
+import { PlusOutlined } from '@ant-design/icons';
+import axios from 'axios';
 const EditableCell = ({
     editing,
     dataIndex,
@@ -38,10 +38,23 @@ const EditableCell = ({
     );
 };
 
-const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
+const BlogTable = () => {
+    const newHistory = useHistory();
+  const [list, setList] = useState([]);
+  const getList = () => {
+    axios
+    .get("/api/blog")
+    .then(res => {
+       setList(res.data);
+    })
+    .catch(err => {
+       console.log(err)
+    });
+  }
    useEffect(() => {
-    listCustomers();
-    }, [listCustomers]);
+        getList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   
@@ -56,12 +69,25 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   const cancel = () => {
     setEditingKey('');
   };
-
+  const updateBlog = (id, row) => {
+    axios
+    .patch(`/api/blog/update/${id}`)
+    .then(res => {
+       if (res.error) {
+         console.log(res.message)
+       } else {
+         message.success("Update done");
+       }
+    })
+    .catch(err => {
+       console.log(err)
+    });
+  }
   const save = async (id) => {
     try {
       const row = await form.validateFields();
-      await updateCustomer(id, row);
-      listCustomers();
+      await updateBlog(id, row);
+      getList();
       setEditingKey('');
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
@@ -69,27 +95,18 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   };
   const columns = [
     {
-      title: 'Full name',
-      dataIndex: 'name',
-      width: '10%',
+      title: 'Title',
+      dataIndex: 'title',
       editable: true,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      width: '15%',
-      editable: true,
+      title: 'Updated At',
+      dataIndex: 'updatedAt',
+      editable: false,
     },
     {
         title: 'Created At',
         dataIndex: 'createdAt',
-        width: '15%',
-        editable: false,
-    },
-    {
-        title: 'Updated At',
-        dataIndex: 'updatedAt',
-        width: '15%',
         editable: false,
     },
     {
@@ -123,7 +140,7 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
                   </Button>
                 </Typography.Link>
                  <Typography.Link disabled={editingKey !== ''}>      
-                  <Link to={`/admin/dashboard/customer/update/${record._id}`}>Update</Link>
+                  <Link to={`/admin/blog/update/${record._id}`}>Update</Link>
                 </Typography.Link>
             </span>
         );
@@ -147,8 +164,9 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
     };
   });
    return (
-    <Skeleton active loading={loading}>
+    <Skeleton active loading={!list}>
       <Form form={form} component={false}>
+      <Button icon ={<PlusOutlined/>} type="primary" onClick={e => newHistory.push("/admin/blog/create")}>Create new blog</Button>
         <Table
           components={{
             body: {
@@ -168,13 +186,4 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
    );
 };
 
-const mapStateToProps = state => ({
-    list: state.customer.list,
-    loading: state.customer.customerLoading || state.adminer.customersLoading,
-    isAuthenticated: state.adminer.isAuthenticated
-});
-
-export default connect(
-    mapStateToProps,
-    { listCustomers, updateCustomer })
-(CustomerTable);
+export default BlogTable;

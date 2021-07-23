@@ -50,7 +50,6 @@ export const listProducts = () => dispatch => {
             type: LIST_PRODUCTS,
             payload: res.data
          });
-         console.log(res.data);
          dispatch(toggleProductLoading());
       })
       .catch(err => {
@@ -74,7 +73,7 @@ export const listProductByCategory = (cateId) => dispatch => {
       });
 };
 
-export const updateProduct = (id, data, history) => dispatch => {
+export const updateProduct = (id, data) => dispatch => {
    dispatch(toggleProductLoading());
    axios
       .patch(`/api/product/update/${id}`, data)
@@ -84,7 +83,6 @@ export const updateProduct = (id, data, history) => dispatch => {
             payload: res.data
          });
          dispatch(toggleProductLoading());
-         history.push(`/list-products`);
       })
       .catch(err => {
          dispatch(toggleProductLoading());

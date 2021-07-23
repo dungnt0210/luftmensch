@@ -133,7 +133,7 @@ const CategoryPage = ({
    
    return (
 
-    <div className="site-card-wrapper">
+    <div className="site-card-wrapper common-page">
     <Row gutter={24}>
       <Col span={6}>
           <Filter 
@@ -151,7 +151,7 @@ const CategoryPage = ({
           />
         </Col>
       <Col span={18}>
-        <ProductList listing={listing} isAuthenticated={isAuthenticated} />
+        <ProductList listing={listing} isAuthenticated={isAuthenticated} column={3}/>
       </Col>
     </Row>
   </div>

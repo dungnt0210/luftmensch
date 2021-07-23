@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { connect } from "react-redux";
-import { listCustomers, updateCustomer } from "../../../actions/customerAction";
-import { Table, Input, Skeleton , Popconfirm, Form, Typography, Button } from 'antd';
-import { Link } from "react-router-dom";
+import { Table, Select, Skeleton , Popconfirm, Form, Typography, Button } from 'antd';
+import { status } from "../../../utils/constants";
+import axios from 'axios';
 const EditableCell = ({
     editing,
     dataIndex,
@@ -13,7 +12,6 @@ const EditableCell = ({
     children,
     ...restProps
   }) => {
-    const inputNode = <Input />;
     return (
       <td {...restProps}>
         {editing ? (
@@ -29,7 +27,7 @@ const EditableCell = ({
               },
             ]}
           >
-            {inputNode}
+            <Select options={status} />
           </Form.Item>
         ) : (
           children
@@ -38,10 +36,29 @@ const EditableCell = ({
     );
 };
 
-const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
+const OrderTable = ({ updateOrder, loading}) => {
+  const [list, setList] = useState([]);
+  const getList = () => {
+    axios
+    .get("/api/order/")
+    .then(res => {
+       let nextList = res.data.map(resItem => ({...resItem, 
+        customerName: resItem.contact ? resItem.contact.name : "Guest",
+        isGuest: resItem.customer ? "No" : "Yes",
+        email: resItem.contact ? resItem.contact.email : "",
+        shipping: resItem.shipping ? resItem.shipping.method.value : "",
+        payment: resItem.payment ? resItem.payment.value : "" 
+    }))
+       setList(nextList);
+    })
+    .catch(err => {
+       console.log(err)
+    });
+  }
    useEffect(() => {
-    listCustomers();
-    }, [listCustomers]);
+        getList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   
@@ -60,8 +77,19 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   const save = async (id) => {
     try {
       const row = await form.validateFields();
-      await updateCustomer(id, row);
-      listCustomers();
+      await     
+      axios
+      .patch(`/api/order/update/${id}`, row)
+      .then(res => {
+         if (res.data.error) {
+             console.log(res.data.message)
+         } else {
+            getList();
+         }
+      })
+      .catch(err => {
+         console.log(err)
+      });
       setEditingKey('');
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
@@ -69,28 +97,34 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   };
   const columns = [
     {
-      title: 'Full name',
-      dataIndex: 'name',
-      width: '10%',
-      editable: true,
+      title: 'Customer',
+      dataIndex: 'customerName',
+      editable: false,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      width: '15%',
-      editable: true,
+      title: 'Guest checkout',
+      dataIndex: 'isGuest',
+      editable: false,
     },
     {
-        title: 'Created At',
-        dataIndex: 'createdAt',
-        width: '15%',
+        title: 'Total',
+        dataIndex: 'total',
         editable: false,
     },
     {
-        title: 'Updated At',
-        dataIndex: 'updatedAt',
-        width: '15%',
+        title: 'Shipping',
+        dataIndex: 'shipping',
         editable: false,
+    },
+    {
+        title: 'Payment',
+        dataIndex: 'payment',
+        editable: false,
+    },
+    {
+        title: 'Status',
+        dataIndex: 'status',
+        editable: true,
     },
     {
       title: 'operation',
@@ -122,9 +156,6 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
                   Edit Inline
                   </Button>
                 </Typography.Link>
-                 <Typography.Link disabled={editingKey !== ''}>      
-                  <Link to={`/admin/dashboard/customer/update/${record._id}`}>Update</Link>
-                </Typography.Link>
             </span>
         );
       },
@@ -147,7 +178,7 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
     };
   });
    return (
-    <Skeleton active loading={loading}>
+    <Skeleton active loading={loading || !list}>
       <Form form={form} component={false}>
         <Table
           components={{
@@ -168,13 +199,4 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
    );
 };
 
-const mapStateToProps = state => ({
-    list: state.customer.list,
-    loading: state.customer.customerLoading || state.adminer.customersLoading,
-    isAuthenticated: state.adminer.isAuthenticated
-});
-
-export default connect(
-    mapStateToProps,
-    { listCustomers, updateCustomer })
-(CustomerTable);
+export default OrderTable;

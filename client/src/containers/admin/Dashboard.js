@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout, Menu } from 'antd';
 import "antd/dist/antd.css";
 import { setCurrentAdmin, logoutAdmin } from "../../actions/adminAction";
@@ -7,26 +7,53 @@ import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
+  LineChartOutlined,
+  SolutionOutlined,
+  DollarCircleOutlined,
+  AppstoreOutlined,
+  ProfileOutlined,
+  LeftCircleOutlined
 } from '@ant-design/icons';
 import './dashboard.scss';
+import jwt_decode from "jwt-decode";
+import store from "../../store";
 import { connect } from "react-redux";
-import Tested from './Tested';
 import ListAdmin from './ListAdmin';
 import CustomerTable from './customer/CustomerTable';
 import CustomerUpdate from './customer/CustomerUpdate';
-
+import ProductTable from "./product/ProductTable";
+import ProductCreate from "./product/ProductCreate";
+import ProductUpdate from "./product/ProductUpdate";
+import CateTable from "./category/CateTable";
+import CateCreate from './category/CateCreate';
+import CateUpdate from './category/CateUpdate';
+import ReviewTable from './review/ReviewTable';
+import OrderTable from './order/OrderTable';
+import adminToken from './../../utils/adminToken';
+import BlogTable from './blog/BlogTable';
+import BlogCreate from './blog/BlogCreate';
+import BlogUpdate from './blog/BlogUpdate';
 const { Header, Sider, Content } = Layout;
+const { SubMenu } = Menu;
 
-const Dashboard = ({ adminer, history, setCurrentAdmin, logoutAdmin }) => {
-  
-    // useEffect(() => {
-    //     if (!adminer.isAuthenticated) {
-    //        history.push("/admin/login");
-    //     }
-    //  }, [adminer.isAuthenticated, history]);
-    
+if (typeof localStorage.adminToken !== "undefined") {
+  const token = localStorage.adminToken;
+  adminToken(token);
+  const decoded = jwt_decode(token);
+  store.dispatch(setCurrentAdmin(decoded));
+  const currentTime = Date.now() / 1000;
+  if (decoded.exp < currentTime) {
+      store.dispatch(logoutAdmin());
+  }
+}
+const Dashboard = ({ adminer, history, setCurrentAdmin, isAuthenticated, logoutAdmin }) => {
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+       history.push("/admin/login");
+    }
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [isAuthenticated]);
     const [collapsed, setCollapsed] = useState(false);
     let { path, url } = useRouteMatch();
 
@@ -42,23 +69,39 @@ const Dashboard = ({ adminer, history, setCurrentAdmin, logoutAdmin }) => {
         style={{
             overflow: 'auto',
             height: '100vh',
-            position: 'sticky',
+            position: 'fixed',
             left: 0,
         }}>
           <div className="logo" />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1" icon={<UserOutlined />}>
-              <Link to={`${url}/list-admin`}>List Admin</Link>
+          <Menu theme="dark" mode="inline" defaultSelectedKeys={['dashboard']}>
+            <Menu.Item key="dashboard" icon={<AppstoreOutlined />}>
+              <Link to={`${url}/dashboard`}>Dashboard</Link>
             </Menu.Item>
-            <Menu.Item key="2" icon={<VideoCameraOutlined />}>
+            <SubMenu key="sales" icon={<DollarCircleOutlined />} title="Sales">
+              <Menu.Item key="order"><Link to={`${url}/order`}>Orders</Link></Menu.Item>
+              <Menu.Item key="review"><Link to={`${url}/review`}>Reviews</Link></Menu.Item>
+            </SubMenu>
+            <SubMenu key="catalog" icon={<ProfileOutlined />} title="Catalog">
+              <Menu.Item key="product"><Link to={`${url}/product`}>Product</Link></Menu.Item>
+              <Menu.Item key="category"><Link to={`${url}/category`}>Category</Link></Menu.Item>
+              <Menu.Item key="blog"><Link to={`${url}/blog`}>Blog</Link></Menu.Item>
+            </SubMenu>
+            <SubMenu key="marketing" icon={<LineChartOutlined />} title="Marketing">
+              <Menu.Item key="coupon">Cart Price Rules</Menu.Item>
+              <Menu.Item key="discount">Catalog Price Rules</Menu.Item>
+            </SubMenu>
+            <Menu.Item key="customer" icon={<UserOutlined />}>
               <Link to={`${url}/customer`}>Customer</Link>
             </Menu.Item>
-            <Menu.Item key="3" icon={<UploadOutlined />}>
-              <Link to={`${url}/tested`}>Tested</Link>
+            <Menu.Item key="admin" icon={<SolutionOutlined />}>
+              <Link to={`${url}/list-admin`}>Admin</Link>
+            </Menu.Item>
+            <Menu.Item key="logout" icon={<LeftCircleOutlined />} onClick={e => logoutAdmin()}>
+              Logout
             </Menu.Item>
           </Menu>
         </Sider>
-        <Layout className="site-layout">
+        <Layout className="site-layout" style={{ marginLeft: collapsed ? 80 : 200 }}>
           <Header className="site-layout-background" style={{ padding: 0 }}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
@@ -77,7 +120,17 @@ const Dashboard = ({ adminer, history, setCurrentAdmin, logoutAdmin }) => {
                <Route path={`${path}/list-admin`} exact component={ListAdmin} />
                <Route path={`${path}/customer/update/:id`} exact component={CustomerUpdate} />
                <Route path={`${path}/customer`} exact component={CustomerTable} />
-               <Route path={`${path}/tested`} exact component={Tested} />
+               <Route path={`${path}/product/create`} component={ProductCreate} />
+               <Route path={`${path}/product/update/:id`} component={ProductUpdate} />
+               <Route path={`${path}/product`} exact component={ProductTable} />
+               <Route path={`${path}/category/create`} component={CateCreate} />
+               <Route path={`${path}/category/update/:id`} component={CateUpdate} />
+               <Route path={`${path}/category`} exact component={CateTable} />
+               <Route path={`${path}/order`} exact component={OrderTable} />
+               <Route path={`${path}/blog/create`} component={BlogCreate} />
+               <Route path={`${path}/blog/update/:id`} component={BlogUpdate} />
+               <Route path={`${path}/blog`} exact component={BlogTable} />
+               <Route path={`${path}/review`} exact component={ReviewTable} />
                <Redirect from="*" to="/admin/dashboard" />
             </Switch>
           </Content>
@@ -88,7 +141,8 @@ const Dashboard = ({ adminer, history, setCurrentAdmin, logoutAdmin }) => {
  };
  
 const mapStateToProps = state => ({
-  adminer: state.adminer
+  adminer: state.adminer,
+  isAuthenticated: state.adminer.isAuthenticated
 });
 
 export default connect(

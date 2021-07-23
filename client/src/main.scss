@@ -1,18 +1,22 @@
 body {
   padding: 0;
 }
+.lock-icon {
+  color: white;
+  line-height: 40px;
+}
 .ant-layout-content {
-  min-height: 600px;
-  padding: 40px 0;
-  width: 80%;
-  margin: auto;
-  .ant-col {
-    .ant-card-cover {
-      img {
-        height: 350px;
-      }
-    }
+  img {
+    max-width:100%;
+    max-height: 100%;
   }
+  .common-page {
+    min-height: 600px;
+    padding: 40px 0;
+    width: 80%;
+    margin: auto;
+  }
+
   .product-wishlist {
     border-radius: 30px;
     border: solid 1px;

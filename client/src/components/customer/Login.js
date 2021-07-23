@@ -31,8 +31,9 @@ const Login = ({ isAuthenticated, loginCustomer, history }) => {
    
     return (
       <div>
-         <Row className="form-container">
-            <Col span={24} >
+         <Row className="form-container login-page">
+            <Col span={12} style={{backgroundImage: "url(/home-page/banner1.webp)", backgroundSize: 'cover'}}/>
+            <Col span={12} style={{padding: '100px 50px'}}>
                <LockOutlined className="lock-icon"/>
                <Typography.Title level={3}>Sign in</Typography.Title>
             <Form onFinish={handleSubmit} {... layout} className="login-form">

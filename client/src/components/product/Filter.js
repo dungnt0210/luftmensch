@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Button, Slider, Collapse, Radio, Tag, Select } from 'antd';
+import { List, Button, Slider, Collapse, Radio, Tag, Select, Space } from 'antd';
 import {
     CheckOutlined,
     MinusOutlined,
@@ -24,6 +24,7 @@ const Filter = ({
    return (
     <Collapse ghost expandIconPosition="right" className="filter-block">
       <Panel header="Sort Order" key="sort">
+      <Space>
       <Select value={sortType} style={{ width: 120 }} onChange={toggleSortType}>
         <Select.Option value="position">Position</Select.Option>
         <Select.Option value="name">Product Name</Select.Option>
@@ -33,6 +34,7 @@ const Filter = ({
             icon={direction ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
             onClick={e => toggleDirection(!direction)}
             />
+      </Space>
       </Panel>
 
       <Panel header="Filter" key="filter">

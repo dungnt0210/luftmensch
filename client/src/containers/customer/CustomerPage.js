@@ -3,8 +3,10 @@ import { connect } from 'react-redux';
 import { Tabs } from 'antd';
 import { getProfile } from '../../actions/customerAction';
 import Account from "../../components/customer/Account";
+import Reviews from "../../components/customer/Reviews";
 import Addresses from "../../components/customer/Addresses";
 import { deleteAddress } from '../../actions/addressAction';
+import Orders from "../../components/customer/Orders";
 import "./customer.scss"
 const CustomerPage = ({ logData, loading, defaultAddress, addressList, getProfile, deleteAddress}) => {
     const { TabPane } = Tabs;
@@ -15,7 +17,7 @@ const CustomerPage = ({ logData, loading, defaultAddress, addressList, getProfil
       deleteAddress(id);
     }
     return (
-        <div className="customer-content">
+        <div className="customer-content common-page">
               <Tabs tabPosition="left">
               <TabPane tab="My Account" key="customer-account">
                 <Account logData={logData} loading={loading}/>
@@ -24,13 +26,10 @@ const CustomerPage = ({ logData, loading, defaultAddress, addressList, getProfil
                 <Addresses defaultAddress={defaultAddress} addressList={addressList} handleDelete={handleDelete}/>
               </TabPane>
               <TabPane tab="My Orders" key="customer-orders">
-              Content of Tab 3
-              </TabPane>
-              <TabPane tab="My Saved Items" key="customer-wishlist">
-                Content of Tab 4
+                <Orders orders={logData.orders}/>
               </TabPane>
               <TabPane tab="My Reviews" key="customer-reviews">
-                Content of Tab 5
+                <Reviews reviews={logData.reviews} />
               </TabPane>
             </Tabs>
         </div>

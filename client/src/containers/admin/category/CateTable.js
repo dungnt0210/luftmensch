@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import { listCustomers, updateCustomer } from "../../../actions/customerAction";
+import { updateCategory } from "../../../actions/categoryAction";
 import { Table, Input, Skeleton , Popconfirm, Form, Typography, Button } from 'antd';
-import { Link } from "react-router-dom";
+import { Link,useHistory } from "react-router-dom";
+import { PlusOutlined } from '@ant-design/icons';
+import axios from 'axios';
 const EditableCell = ({
     editing,
     dataIndex,
@@ -38,10 +40,28 @@ const EditableCell = ({
     );
 };
 
-const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
+const CateTable = ({ updateCategory, loading}) => {
+    const newHistory = useHistory();
+  const [list, setList] = useState([]);
+  const getList = () => {
+    axios
+    .get("/api/category/all")
+    .then(res => {
+       let nextList = res.data.map(resItem => ({...resItem, 
+        parentName: resItem.parentCate ? resItem.parentCate.name : "",
+        isMain: resItem.mainCate ? "Yes" : "No"
+    }))
+       console.log(nextList);
+       setList(nextList);
+    })
+    .catch(err => {
+       console.log(err)
+    });
+  }
    useEffect(() => {
-    listCustomers();
-    }, [listCustomers]);
+        getList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
   const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState('');
   
@@ -60,8 +80,8 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   const save = async (id) => {
     try {
       const row = await form.validateFields();
-      await updateCustomer(id, row);
-      listCustomers();
+      await updateCategory(id, row);
+      getList();
       setEditingKey('');
     } catch (errInfo) {
       console.log('Validate Failed:', errInfo);
@@ -69,27 +89,23 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
   };
   const columns = [
     {
-      title: 'Full name',
+      title: 'Category name',
       dataIndex: 'name',
-      width: '10%',
       editable: true,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      width: '15%',
-      editable: true,
+      title: 'Parent',
+      dataIndex: 'parentName',
+      editable: false,
     },
     {
-        title: 'Created At',
-        dataIndex: 'createdAt',
-        width: '15%',
-        editable: false,
+        title: 'Description',
+        dataIndex: 'description',
+        editable: true,
     },
     {
-        title: 'Updated At',
-        dataIndex: 'updatedAt',
-        width: '15%',
+        title: 'Is main cate?',
+        dataIndex: 'isMain',
         editable: false,
     },
     {
@@ -123,7 +139,7 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
                   </Button>
                 </Typography.Link>
                  <Typography.Link disabled={editingKey !== ''}>      
-                  <Link to={`/admin/dashboard/customer/update/${record._id}`}>Update</Link>
+                  <Link to={`/admin/category/update/${record._id}`}>Update</Link>
                 </Typography.Link>
             </span>
         );
@@ -147,8 +163,9 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
     };
   });
    return (
-    <Skeleton active loading={loading}>
+    <Skeleton active loading={loading || !list}>
       <Form form={form} component={false}>
+      <Button icon ={<PlusOutlined/>} type="primary" onClick={e => newHistory.push("/admin/category/create")}>Create new category</Button>
         <Table
           components={{
             body: {
@@ -169,12 +186,10 @@ const CustomerTable = ({ listCustomers, updateCustomer, list, loading}) => {
 };
 
 const mapStateToProps = state => ({
-    list: state.customer.list,
-    loading: state.customer.customerLoading || state.adminer.customersLoading,
-    isAuthenticated: state.adminer.isAuthenticated
+    loading: state.category.loading,
 });
 
 export default connect(
     mapStateToProps,
-    { listCustomers, updateCustomer })
-(CustomerTable);
+    { updateCategory })
+(CateTable);

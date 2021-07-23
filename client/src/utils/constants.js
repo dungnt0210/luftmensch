@@ -24,3 +24,11 @@ export const sizes = [
     {label: 'XL', value: 'XL', disabled: false, count: 10},
     {label: 'XXL', value: 'XXL', disabled: false, count: 10}
 ];
+export const status = [
+    {label: 'Pending', value: 'Pending'},
+    {label: 'Processing', value: 'Processing'},
+    {label: 'Shipping', value: 'Shipping'},
+    {label: 'Success', value: 'Success'},
+    {label: 'Return', value: 'Return'},
+    {label: 'Cancel', value: 'Cancel'}
+];

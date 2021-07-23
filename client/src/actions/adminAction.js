@@ -84,6 +84,7 @@ export const loginAdmin = (data) => dispatch => {
          const { token } = res.data;
          adminToken(token);
          const decoded = jwt_decode(token);
+         localStorage.setItem("adminToken", token);
          dispatch(setCurrentAdmin(decoded));
          dispatch(toggleAdminLoading());
       })
@@ -113,6 +114,7 @@ export const toggleAdminsLoading = () => {
 };
 
 export const logoutAdmin = () => dispatch => {
+   localStorage.removeItem("adminToken");
    adminToken(false);
    dispatch(setCurrentAdmin({}));
 };

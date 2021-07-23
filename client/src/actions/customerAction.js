@@ -18,14 +18,14 @@ import { SET_CURRENT_CUSTOMER,
 export const registerCustomer = (data, history) => dispatch => {
    dispatch(toggleCustomerLoading());
    axios
-      .post("/customer/signup", data)
+      .post("/api/customer/signup", data)
       .then(res => {
          dispatch(toggleCustomerLoading());
          localStorage.setItem(
             "loginMessage",
             "Successfully registered. Login to continue"
          );
-         history.push("/login");
+         history.push("/custmer/login");
       })
       .catch(err => {
         console.log(err);
@@ -199,7 +199,7 @@ export const addToCart = (product, cart, isAuthenticated) => dispatch => {
                type: SET_CART,
                payload: res.data.reverse()
             });
-            dispatch(setTotal(cart));
+            dispatch(setTotal(res.data));
          })
          .catch(err => {
             console.log(err);
@@ -232,7 +232,7 @@ export const removeFromCart = (cart, isAuthenticated, index) => dispatch => {
             type: SET_CART,
             payload: res.data.reverse()
          });
-         dispatch(setTotal(cart));
+         dispatch(setTotal(res.data));
       })
       .catch(err => {
          console.log(err);
@@ -260,7 +260,7 @@ export const updateCartItem = (cart, isAuthenticated, index, qty) => dispatch =>
             type: SET_CART,
             payload: res.data.reverse()
          });
-         dispatch(setTotal(cart));
+         dispatch(setTotal(res.data));
       })
       .catch(err => {
          console.log(err);
@@ -348,6 +348,7 @@ export const getCart = () => dispatch => {
          type: SET_CART,
          payload: res.data.reverse()
       });
+      dispatch(setTotal(res.data));
       dispatch(toggleCustomerLoading());
    })
    .catch(err => {
@@ -361,6 +362,7 @@ export const getCartLocal = () => dispatch => {
       type: SET_CART,
       payload: JSON.parse(localStorage.cart)
    });
+   dispatch(setTotal(JSON.parse(localStorage.cart)));
    dispatch(toggleCustomerLoading());
 };
 

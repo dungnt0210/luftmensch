@@ -20,6 +20,12 @@ import './main.scss';
 import { Drawer, Layout, Button } from 'antd';
 import Cart from './containers/Cart';
 import Wishlist from './containers/Wishlist';
+import Maincate from "./containers/Maincate";
+import Search from './containers/Search';
+import SearchPage from "./containers/SearchPage";
+import SuccessPage from './containers/SuccessPage';
+import Signup from './components/customer/Signup';
+import ErrorPage from './containers/ErrorPage';
 
 if (typeof localStorage.customerToken !== "undefined") {
     const token = localStorage.customerToken;
@@ -61,13 +67,18 @@ const Main = ({
                 </Layout.Header>
                 <Layout.Content>
                     <Switch>
-                        <Route path="/customer/login" component={Login} />
-                        <Route path="/customer/account" component={CustomerPage} />
-                        <Route path="/checkout" component={CheckoutPage} />
-                        <Route path="/product/:id" component={ProductPage} />
-                        <Route path="/category/:id" component={CategoryPage} />
-                        <Route path="/" component={HomePage} />
-                        <Redirect from="*" to="/" />
+                        <Route exact path="/customer/login" component={Login} />
+                        <Route exact path="/customer/signup" component={Signup} />
+                        <Route exact path="/customer/account" component={CustomerPage} />
+                        <Route exact path="/checkout" component={CheckoutPage} />
+                        <Route exact path="/product/:id" component={ProductPage} />
+                        <Route exact path="/category/:id" component={CategoryPage} />
+                        <Route exact path="/main-cate/:id" component={Maincate} />
+                        <Route exact path="/search" component={SearchPage} />
+                        <Route exact path="/checkoutsuccess" component={SuccessPage} />
+                        <Route exact path="/notfound" component={ErrorPage} />
+                        <Route exact path="/" component={HomePage} />
+                        <Redirect from="*" to="/notfound" />
                     </Switch>
                 </Layout.Content>
                 <Layout.Footer>
@@ -102,9 +113,10 @@ const Main = ({
                 closable={false}
                 onClose={toggleSearch}
                 visible={global.searchOpened}
+                height={400}
                 placement='top'
             >
-                <p>Search</p>
+                <Search/>
             </Drawer>
          </BrowserRouter>
     );

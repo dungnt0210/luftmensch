@@ -12,7 +12,7 @@ const ProductPage = ({getProductById, match, history, loading}) => {
         getProductById(match.params.id);
      }, [getProductById, match.params.id]);
    return (
-    <div className="site-card-wrapper">
+    <div className="site-card-wrapper common-page">
     <Row gutter={[24,48]}>
         <Col span={14}>
             <ProductSlider history={history} />
