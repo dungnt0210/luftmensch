@@ -11,7 +11,11 @@ router.get("/my-profile",
 passport.authenticate('customer-permission', { session: false }),
 (req, res) => {
    Customer.findOne({ _id: req.user._id })
-   .populate('addresses')
+   .populate('addresses orders')
+   .populate({
+      path: 'reviews',
+      populate: { path: 'product' }
+    })
    .then(doc => res.json(doc))
    .catch(err => res.json(err));
    }

@@ -3,6 +3,7 @@ const Customer = require("../model/Customer");
 const Review = require("../model/Review");
 const Address = require("../model/Address");
 const Order = require("../model/Order");
+const fs = require("fs");
 
 async function validateQty(data) {
    for (const item of data) {
@@ -27,7 +28,7 @@ async function guestExecute(data) {
    }
 }
 
-async function customerExecute(data, customerId, data) {
+async function customerExecute(customerId, data) {
    let customer = await Customer.findOne({_id: customerId}).populate("reviews");
    if (data.createAddress) {
       const newAddress = new Address({isDefault: true, ...data.contact});
@@ -38,12 +39,20 @@ async function customerExecute(data, customerId, data) {
       productItem.qty-= item.options.qty;
       productItem.options[item.options.colorIndex].color.sizes[item.options.sizeIndex].count -= item.options.qty;
       await productItem.save();
-      let reviewKey = customer.reviews.findIndex(itemR => itemR.product === productItem._id);
+      let reviewKey = customer.reviews.findIndex(itemR => itemR.product == item.product);
+      
       if (reviewKey === -1) {
-         await Review.create({product: productItem._id}).then(doc => customer.reviews.push(doc._id))
+         await Review.create({product: productItem._id, customer: customerId}).then(doc => {
+            customer.reviews.push(doc._id);
+            let reviewDir = 'client/public/review/' + doc._id;
+            if (!fs.existsSync(reviewDir)){
+               fs.mkdirSync(reviewDir, err => res.status(400));
+           }
+         })
       }
    }
    customer.cart = [];
+   data.customer = customerId;
    const newOrder = new Order(data);
       newOrder
       .save()

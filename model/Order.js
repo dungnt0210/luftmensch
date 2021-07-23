@@ -56,8 +56,8 @@ const Order = {
       },  
    },
    status: {
-      value: String,
-      label: String
+      type: String,
+      default: "Pending"
    }
 };
 

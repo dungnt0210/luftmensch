@@ -13,6 +13,8 @@ router.post("/create", (req, res) => {
 
 router.get("/", (req, res) => {
       Order.find()
+         .sort({updatedAt: -1})
+         .populate("shipping payment")
          .then(docs => res.status(200).json(docs))
          .catch(err => res.status(400).json(err));
    }

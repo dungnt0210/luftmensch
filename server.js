@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const app = express();
 const passport = require("passport");
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({ limit: "100mb" }));
 // require('mongoose').set('debug', true);
 
 // db configuration
@@ -22,13 +22,13 @@ require("./middleware/passport")(passport);
 app.use("/blog/", require("./route/blog"));
 app.use("/api/product/", require("./route/product"));
 app.use("/api/category/", require("./route/category"));
-app.use("/order/", require("./route/order"));
+app.use("/api/order/", require("./route/order"));
 app.use("/api/customer/", require("./route/customer"));
 app.use("/api/checkout/", require("./route/checkout"));
 app.use("/api/address/", require("./route/address"));
 app.use("/api/admin/", require("./route/admin"));
 
-app.use("/review/", require("./route/review"));
+app.use("/api/review/", require("./route/review"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server up and running on port ${PORT}`));

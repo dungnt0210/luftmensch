@@ -21,7 +21,8 @@ const Category = {
       ref: 'Category'
    }],
    mainCate: {
-      type: Boolean
+      type: Boolean,
+      default: false
    }
 };
 

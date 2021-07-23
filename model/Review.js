@@ -6,7 +6,7 @@ const Review = {
    rate: {
       type: Number,
    },
-   reviewd: {
+   reviewed: {
       type: Boolean,
       default: false
    },
@@ -25,7 +25,11 @@ const Review = {
    product:{
       type: ObjectId,
       ref: 'Product'
-   }
+   },
+   customer: {
+      type: ObjectId,
+      ref: 'Customer'
+   },
 };
 
 const ReviewSchema = new Schema(Review, {timestamps: true});

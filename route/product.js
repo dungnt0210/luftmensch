@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../model/Product");
+const Category = require("../model/Category");
 const multer = require("multer");
 const fs = require("fs");
 const productController = require("../controller/productController");
@@ -30,7 +31,7 @@ var storage = multer.diskStorage({
    {name: imgRight, maxCount: 1}
 ]);
 
- router.post("/upload/",
+ router.post("/upload/:productId",
    (req, res) => {
       upload(req, res, err => {
          if (err) {
@@ -39,14 +40,18 @@ var storage = multer.diskStorage({
              message: `Cannot upload files. Error is ${err}`
            });
          } else {
-            let productPath = 'client/public/product-img/' + req.query.productId + '/';
-            fs.rename(tempDirName + req.files[imgFront][0].filename, productPath + imgFront + fileType, err => res.status(400));
-            fs.rename(tempDirName + req.files[imgBehind][0].filename, productPath + imgBehind + fileType, err => res.status(400));
-            fs.rename(tempDirName + req.files[imgLeft][0].filename, productPath + imgLeft + fileType, err => res.status(400));
-            fs.rename(tempDirName + req.files[imgRight][0].filename, productPath + imgRight + fileType, err => res.status(400));
+            let productPath = 'client/public/product-img/' + req.params.productId + '/';
+            if (req.files[imgFront]) 
+               fs.rename(tempDirName + req.files[imgFront][0].filename, productPath + imgFront + fileType, err => res.status(400));
+            if (req.files[imgBehind])
+               fs.rename(tempDirName + req.files[imgBehind][0].filename, productPath + imgBehind + fileType, err => res.status(400));
+            if (req.files[imgLeft])
+               fs.rename(tempDirName + req.files[imgLeft][0].filename, productPath + imgLeft + fileType, err => res.status(400));
+            if (req.files[imgRight])
+               fs.rename(tempDirName + req.files[imgRight][0].filename, productPath + imgRight + fileType, err => res.status(400));
             res.status(200).json({
                result: 'ok',
-               message: "Upload image successfully"
+                message: "Upload image successfully"
              });
            }
        });
@@ -55,7 +60,7 @@ router.post("/create", (req, res) => {
       if (req.body.options) {
          req.body.qty = productController.caculateQty(req.body.options);
       }
-      const newProduct = new Product(req.body);
+      const newProduct = new Product({...req.body, finalPrice: req.body.price});
       newProduct
          .save()
          .then(doc => {
@@ -63,42 +68,57 @@ router.post("/create", (req, res) => {
             if (!fs.existsSync(productDir)){
                fs.mkdirSync(productDir, err => res.status(400));
            }
-            res.json(doc);
+           doc.images = [
+               '/product-img/'+  doc._id + "/" + imgFront + fileType,
+               '/product-img/'+  doc._id + "/" + imgBehind + fileType,
+               '/product-img/'+  doc._id + "/" + imgLeft + fileType,
+               '/product-img/'+  doc._id + "/" + imgRight + fileType,
+           ];
+           doc.save().then(ltRes => res.json(ltRes))
          })
          .catch(err => res.json(err));
    }
 );
 router.post("/updatemany", async (req, res) => {
-   Product.find({})
+   Category.find({})
       .then(docs => {
          docs.forEach(async doc => {
-            let qty = 0;
-            // await doc.options.forEach(item => {
-            //    item.color.sizes.forEach(childItem =>
-            //       qty+=childItem.count
-            //       )
-            // })
-            doc.options[1].color.sizes[1].size="S";
+            doc.bannerImage = await'/cate/'+doc._id+'.png';
             doc.save();
-         }).then( () => res.json(200))
-      })
+         })
+      }).then( () => res.json(200))
       .catch(err => res.status(400).json(err));
 }
 );
 router.get("/", (req, res) => {
       Product.find()
+      .populate("category", "name")
          .then(docs => res.status(200).json(docs))
          .catch(err => res.status(400).json(err));
    }
 );
 
-router.get("/" , (req, res) => {
+router.get("/home", (req, res) => {
    Product.find()
+   .sort({createdAt: -1})
+   .limit(10)
+   .populate("category", "name")
       .then(docs => res.status(200).json(docs))
       .catch(err => res.status(400).json(err));
 }
 );
-
+router.get("/main-cate/:cateId", async (req, res) => {
+   var doc = await Category.findOne({_id: req.params.cateId}).populate("childCate", "_id name");
+   var listing = [];
+   for(let child of doc.childCate) {
+      let newChild = await Product.find({category: child._id})
+      .sort({createdAt: -1})
+      .limit(5);
+      listing.push({cate: child, list: newChild});
+   }
+   res.status(200).json({...doc._doc, listing: listing});
+}
+);
 
 router.get("/category/:cateId", (req, res) => {
    Product
