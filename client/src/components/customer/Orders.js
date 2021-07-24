@@ -7,13 +7,12 @@ const { Column } = Table;
 const Orders = ({orders}) => {
     const [lsOrders, setLsOrders] = useState([]);
     const formatContact = contact => {
-        console.log(contact.detail+ ", "+contact.commune.label+ ", "+ contact.district.label+ ", "+contact.province.label);
         return contact.detail+ ", "+contact.commune.label+ ", "+ contact.district.label+ ", "+contact.province.label;
     }
     useEffect (() => {
         if(orders) 
             setLsOrders(orders?.map(item => 
-                ({orderId: item._id, address: formatContact(item.contact), 
+                ({orderId: item._id, address: item && item.contact ? formatContact(item.contact) : "", 
                     total:item.total, createdAt: item.createdAt, status: item.status})
             ))
     }, [orders]);

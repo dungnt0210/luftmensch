@@ -12,7 +12,7 @@ const AddressListing = forwardRef(({defaultAddress, addressList, logData, checko
      const history = useHistory();
      const [checkedAddress, setCheckedAddress] = useState({isEmpty: true});
      const [hasAddress, setHasAddress] = useState(false);
-     const [fullAddresses, setFullAdressses] = useState([defaultAddress]);
+     const [fullAddresses, setFullAdressses] = useState([]);
      const [chooseAddress, setChooseAddress] = useState(defaultAddress._id);
      useEffect( () => {
       if (!defaultAddress) {
@@ -23,11 +23,18 @@ const AddressListing = forwardRef(({defaultAddress, addressList, logData, checko
      }, [defaultAddress]);
      
      useEffect( () => {
-       if (addressList) {
-          setFullAdressses([defaultAddress,...addressList]);
+       if (defaultAddress) {
+         let newAddressList = [defaultAddress];
+         setFullAdressses(newAddressList);
        }
-     // eslint-disable-next-line react-hooks/exhaustive-deps
-     }, [defaultAddress, addressList]);
+       if (addressList && defaultAddress) {
+         let newAddressList = [defaultAddress,...addressList];
+          setFullAdressses(newAddressList);
+       }
+     }, [addressList, defaultAddress]);
+     useEffect( () => {
+      console.log(fullAddresses)
+    }, [fullAddresses]);
      const onCancel = () => {
        setIsEditing(false);
      }
@@ -85,7 +92,8 @@ const AddressListing = forwardRef(({defaultAddress, addressList, logData, checko
                     gutter: 16,
                     column: 2
                     }}
-                    dataSource={fullAddresses}
+                    loading={!fullAddresses}
+                    dataSource={fullAddresses ? fullAddresses : []}
                     renderItem={item => (
                     <List.Item>
                         <Card title={item.telephone} actions={
@@ -106,4 +114,8 @@ const AddressListing = forwardRef(({defaultAddress, addressList, logData, checko
         </>
     );
 });
-export default connect(null, {checkout}, null, {forwardRef: true})(AddressListing);
+const mapStateToProps = state => ({
+  defaultAddress: state.addressData.defaultAddress,
+  addressList: state.addressData.currentList
+});
+export default connect(mapStateToProps, {checkout}, null, {forwardRef: true})(AddressListing);

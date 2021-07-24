@@ -44,10 +44,10 @@ const CheckoutPage = ({
     const checkoutAddress = useRef();
     const emptyData = { email: "", name: ""};
     let addressComponent;
-    
+
     if (isAuthenticated) {
         if (defaultAddress) {
-            addressComponent =  <AddressListing logData={data} ref={checkoutAddress} defaultAddress={defaultAddress} addressList={addressList} />
+            addressComponent =  <AddressListing logData={data} ref={checkoutAddress}/>
         } else {
             addressComponent =  <AddressForm ref={checkoutAddress} data={data} />
         }

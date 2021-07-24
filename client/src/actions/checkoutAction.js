@@ -54,7 +54,7 @@ export const getPayment = () => dispatch => {
                type: SET_CART,
                payload: []
             });
-            history.push("/");
+            history.push("/checkoutsuccess");
          }
          dispatch(toogleCheckoutLoading());
       })
@@ -78,7 +78,7 @@ export const checkout = (data, history) => dispatch => {
                type: SET_CART,
                payload: []
             });
-            history.push("/");
+            history.push("/checkoutsuccess");
          }
          dispatch(toogleCheckoutLoading());
       })

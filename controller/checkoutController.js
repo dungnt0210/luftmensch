@@ -30,6 +30,7 @@ async function guestExecute(data) {
 
 async function customerExecute(customerId, data) {
    let customer = await Customer.findOne({_id: customerId}).populate("reviews");
+   let reviewList = [];
    if (data.createAddress) {
       const newAddress = new Address({isDefault: true, ...data.contact});
       await newAddress.save().then(doc => customer.addresses.push(doc._id));
@@ -41,7 +42,7 @@ async function customerExecute(customerId, data) {
       await productItem.save();
       let reviewKey = customer.reviews.findIndex(itemR => itemR.product == item.product);
       
-      if (reviewKey === -1) {
+      if (reviewKey === -1 && !reviewList.includes(item.product)) {
          await Review.create({product: productItem._id, customer: customerId}).then(doc => {
             customer.reviews.push(doc._id);
             let reviewDir = 'client/public/review/' + doc._id;
@@ -49,6 +50,7 @@ async function customerExecute(customerId, data) {
                fs.mkdirSync(reviewDir, err => res.status(400));
            }
          })
+         reviewList.push(item.product);
       }
    }
    customer.cart = [];
@@ -58,6 +60,7 @@ async function customerExecute(customerId, data) {
       .save()
       .then(doc => {
          customer.orders.push(doc._id);
+         console.log(customer.reviews);
          customer.save()
       })
       .catch(err => res.json(err));

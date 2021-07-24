@@ -122,7 +122,7 @@ const CategoryPage = ({
         if (x > y) {return 1;}
         return 0;
       });
-    } else if (setSortType==="price") {
+    } else if (value==="price") {
      nextListing = await nextListing.sort( (itemA, itemB) => {
         return itemB.finalPrice - itemA.finalPrice;
       });
