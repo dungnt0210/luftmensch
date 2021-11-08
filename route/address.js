@@ -48,7 +48,11 @@ passport.authenticate('customer-permission', { session: false }),
                 { $push: {addresses: doc._id } },
                 { new: true }
             )
-            .populate("addresses")
+            .populate("addresses reviews orders")
+            .populate({
+               path: 'reviews',
+               populate: { path: 'product' }
+             })
             .then(customer => res.status(200).json(customer))
             .catch(err => res.json(err));
          })

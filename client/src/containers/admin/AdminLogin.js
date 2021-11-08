@@ -21,7 +21,7 @@ const AdminLogin = ({ isAuthenticated, loginAdmin, history }) => {
  
     useEffect(() => {
        if (isAuthenticated) {
-          history.push("/admin/dashboard");
+          history.push("/admin/order");
        }
     }, [isAuthenticated, history]);
 
